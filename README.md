@@ -97,6 +97,7 @@ modern_delivery_os/
   README.md
   README_EN.md
   CHECKLIST.md
+  CHECKLIST_EN.md
   START_HERE.md
   docs/
   backend/
@@ -107,6 +108,7 @@ modern_delivery_os/
 ## 建议先看哪里
 
 - `docs/final-plan.md`：最终产品方向和架构规划
+- `CHECKLIST.md`：当前完成度清单
 - `backend/START.md`：后端本地运行说明
 - `frontend/README.md`：前端本地运行说明
 - `backend/app/main.py`：FastAPI 入口

@@ -1,30 +1,32 @@
-# Build Checklist
+# 构建清单
 
-## Phase 0
+English version: `CHECKLIST_EN.md`
 
-- [x] Freeze modern role model
-- [x] Freeze workflow states
-- [x] Freeze domain objects
-- [x] Freeze MVP scope
-- [x] Create isolated project skeleton
+## Phase 0 基础冻结
 
-## Phase 1 Backend
+- [x] 冻结现代化角色模型
+- [x] 冻结工作流状态
+- [x] 冻结领域对象
+- [x] 冻结 MVP 范围
+- [x] 创建独立项目骨架
 
-- [x] Add `pyproject.toml`
-- [x] Add SQLAlchemy models
-- [x] Add Alembic migration setup
-- [x] Add task APIs
-- [x] Add plan APIs
-- [x] Add review APIs
-- [x] Add work item APIs
-- [x] Add artifact APIs
-- [x] Add activity APIs
-- [x] Add supervisor APIs
-- [x] Add event publisher interface
-- [x] Add runtime status and control APIs
-- [x] Add actor-based permission checks
+## Phase 1 后端
 
-## Phase 2 Workers
+- [x] 增加 `pyproject.toml`
+- [x] 增加 SQLAlchemy 模型
+- [x] 增加 Alembic migration 初始化
+- [x] 增加 task API
+- [x] 增加 plan API
+- [x] 增加 review API
+- [x] 增加 work item API
+- [x] 增加 artifact API
+- [x] 增加 activity API
+- [x] 增加 supervisor API
+- [x] 增加事件发布接口
+- [x] 增加 runtime 状态与控制 API
+- [x] 增加基于 actor 的权限校验
+
+## Phase 2 Worker
 
 - [ ] Intake worker
 - [ ] Planning worker
@@ -33,35 +35,35 @@
 - [x] Execution worker
 - [x] Reporting worker
 - [x] Supervisor worker
-- [x] Global runtime loop
-- [x] Task-level runtime run/sweep controls
+- [x] 全局 runtime loop
+- [x] 任务级 runtime run/sweep 控制
 
-## Phase 3 Frontend
+## Phase 3 前端
 
 - [x] App shell
-- [ ] Inbox page
+- [ ] Inbox 页面
 - [x] Task board
 - [x] Task detail
-- [x] Teams page
-- [ ] Templates page
-- [x] Settings page
-- [x] Attention page
-- [x] Runtime status panel
-- [x] Runtime audit panels
-- [x] Task-level runtime controls
+- [x] Teams 页面
+- [ ] Templates 页面
+- [x] Settings 页面
+- [x] Attention 页面
+- [x] Runtime 状态面板
+- [x] Runtime audit 面板
+- [x] 任务级 runtime 控制
 
-## Phase 4 Realtime
+## Phase 4 实时能力
 
-- [x] WebSocket server
-- [x] Live task timeline
-- [x] Supervisor panel
-- [x] Intervention stream
-- [x] Runtime event marking in UI
+- [x] WebSocket 服务
+- [x] 实时任务时间线
+- [x] Supervisor 面板
+- [x] Intervention 流
+- [x] UI 中的 runtime 事件标记
 
-## Phase 5 Quality
+## Phase 5 质量
 
-- [x] Backend smoke tests
-- [x] End-to-end API flow tests
-- [x] Runtime orchestration tests
-- [x] Runtime control endpoint tests
-- [x] Frontend production build verification
+- [x] 后端 smoke tests
+- [x] 端到端 API 流程测试
+- [x] Runtime orchestration 测试
+- [x] Runtime control endpoint 测试
+- [x] 前端生产构建验证
