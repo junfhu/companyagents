@@ -681,11 +681,12 @@ def test_runtime_worker_escalates_stalled_blocked_task(session_factory):
     asyncio.run(scenario())
 
 
-def test_runtime_worker_dispatches_to_openclaw_and_ingests_session(session_factory, monkeypatch, tmp_path):
+def test_runtime_worker_dispatches_to_openclaw_and_ingests_session(session_factory, tmp_path):
     async def scenario():
         from companyagents.backend.app.schemas.plan import PlanCreate
         from companyagents.backend.app.schemas.review import ReviewAction
         from companyagents.backend.app.schemas.task import TaskCreate
+        import companyagents.backend.app.services.runtime_service as runtime_service
         from companyagents.backend.app.services.plan_service import PlanService
         from companyagents.backend.app.services.review_service import ReviewService
         from companyagents.backend.app.services.task_bundle_service import TaskBundleService
@@ -731,6 +732,7 @@ def test_runtime_worker_dispatches_to_openclaw_and_ingests_session(session_facto
             )
             await session.commit()
 
+        original_get_settings = runtime_service.get_settings
         mock_settings = get_settings().model_copy(
             update={
                 "openclaw_enabled": True,
@@ -738,55 +740,58 @@ def test_runtime_worker_dispatches_to_openclaw_and_ingests_session(session_facto
                 "openclaw_command_timeout_seconds": 30,
                 "openclaw_agents_root": str(agents_root),
                 "openclaw_default_dispatch_agent": "shangshu",
+                "openclaw_agent_map_json": '{"Engineering":"gongbu"}',
             }
         )
-        monkeypatch.setattr("companyagents.backend.app.services.runtime_service.get_settings", lambda: mock_settings)
+        runtime_service.get_settings = lambda: mock_settings
+        try:
+            worker = RuntimeWorker(session_factory=session_factory, poll_interval_seconds=60, actor_id="runtime-test")
+            first_run = await worker.run_once()
+            assert first_run["generated_work_items"] == 1
+            assert first_run["dispatched_tasks"] == 1
 
-        worker = RuntimeWorker(session_factory=session_factory, poll_interval_seconds=60, actor_id="runtime-test")
-        first_run = await worker.run_once()
-        assert first_run["generated_work_items"] == 1
-        assert first_run["dispatched_tasks"] == 1
-
-        session_payloads = [
-            {
-                "timestamp": "2026-03-13T10:00:00Z",
-                "message": {
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": f"任务ID: {task.id}\n已收到任务，准备在工部执行并回报结果。",
-                        }
-                    ],
-                },
-            },
-            {
-                "timestamp": "2026-03-13T10:00:05Z",
-                "message": {
-                    "role": "tool_result",
-                    "toolName": "bash",
-                    "details": {
-                        "exitCode": 0,
-                        "stdout": f"processed {task.id}",
+            session_payloads = [
+                {
+                    "timestamp": "2026-03-13T10:00:00Z",
+                    "message": {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": f"任务ID: {task.id}\n已收到任务，准备在工部执行并回报结果。",
+                            }
+                        ],
                     },
-                    "content": [],
                 },
-            },
-        ]
-        (session_dir / "session-1.jsonl").write_text(
-            "\n".join(json.dumps(item, ensure_ascii=False) for item in session_payloads),
-            encoding="utf-8",
-        )
+                {
+                    "timestamp": "2026-03-13T10:00:05Z",
+                    "message": {
+                        "role": "tool_result",
+                        "toolName": "bash",
+                        "details": {
+                            "exitCode": 0,
+                            "stdout": f"processed {task.id}",
+                        },
+                        "content": [],
+                    },
+                },
+            ]
+            (session_dir / "session-1.jsonl").write_text(
+                "\n".join(json.dumps(item, ensure_ascii=False) for item in session_payloads),
+                encoding="utf-8",
+            )
 
-        second_run = await worker.run_once()
-        assert second_run["dispatched_tasks"] == 0
+            second_run = await worker.run_once()
+            assert second_run["dispatched_tasks"] == 0
 
-        async with session_factory() as verification_session:
-            bundle = await TaskBundleService(verification_session).build_bundle(task.id)
-            assert bundle["task"]["meta"]["openclaw_agent_id"] == "gongbu"
-            assert any(event["topic"] == "openclaw.dispatched" for event in bundle["activity"])
-            assert any(event["topic"] == "openclaw.assistant" for event in bundle["activity"])
-            assert any(event["topic"] == "openclaw.tool_result" for event in bundle["activity"])
-            assert any(item["meta"].get("openclaw_auto") for item in bundle["artifacts"])
+            async with session_factory() as verification_session:
+                bundle = await TaskBundleService(verification_session).build_bundle(task.id)
+                assert bundle["task"]["meta"]["openclaw_agent_id"] == "gongbu"
+                assert any(event["topic"] == "openclaw.dispatched" for event in bundle["activity"])
+                assert any(event["topic"] == "openclaw.assistant" for event in bundle["activity"])
+                assert any(event["topic"] == "openclaw.tool_result" for event in bundle["activity"])
+                assert any(item["meta"].get("openclaw_auto") for item in bundle["artifacts"])
+        finally:
+            runtime_service.get_settings = original_get_settings
 
     asyncio.run(scenario())

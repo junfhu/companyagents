@@ -91,9 +91,9 @@ export function TaskHeroPanel({
           <span>{t("common.owner")}: {translateRole(language, task.owner_role)}</span>
           <span>{t("common.priority")}: {translatePriority(language, task.priority)}</span>
           <span>{t("common.updated")}: {formatDate(task.updated_at)}</span>
-          {openclawAgentId ? <span>OpenClaw Agent: {openclawAgentId}</span> : null}
+          {openclawAgentId ? <span>{t("common.openclawAgent")}: {openclawAgentId}</span> : null}
           {openclawDispatch ? (
-            <span>OpenClaw Dispatch: {openclawDispatch.ok ? "ok" : "failed"}</span>
+            <span>{t("common.openclawDispatch")}: {openclawDispatch.ok ? "ok" : "failed"}</span>
           ) : null}
         </div>
       </div>
@@ -633,6 +633,15 @@ export function SupervisorPanel({
 }
 
 function renderEventPayload(event: ActivityEvent) {
+  if (event.topic.startsWith("openclaw.")) {
+    const summary = summarizeOpenClawPayload(event.payload);
+    if (!summary) return null;
+    return (
+      <div className="timeline-payload">
+        <span className="chip">{summary}</span>
+      </div>
+    );
+  }
   const entries = Object.entries(event.payload ?? {}).filter(([, value]) => {
     if (value === null || value === undefined || value === "") return false;
     return true;
@@ -675,6 +684,9 @@ function isRuntimeEvent(event: ActivityEvent) {
 
 function summarizeRuntimeEvent(event: ActivityEvent) {
   const lang = typeof document !== "undefined" && document.documentElement.lang === "en" ? "en" : "zh-CN";
+  if (event.topic.startsWith("openclaw.")) {
+    return summarizeOpenClawPayload(event.payload) ?? summarizeText(event.topic, 100);
+  }
   if (event.payload?.work_item_count) {
     return `${lang === "zh-CN" ? "影响的工作项" : "Affected work items"}: ${String(event.payload.work_item_count)}`;
   }
@@ -685,6 +697,26 @@ function summarizeRuntimeEvent(event: ActivityEvent) {
     return `${lang === "zh-CN" ? "影响的工作项" : "Affected work item"} ${String(event.payload.work_item_id)}`;
   }
   return summarizeText(event.topic, 100);
+}
+
+function summarizeOpenClawPayload(payload: Record<string, unknown>) {
+  if (typeof payload.text === "string" && payload.text.trim()) {
+    return summarizeText(payload.text, 140);
+  }
+  if (typeof payload.thinking === "string" && payload.thinking.trim()) {
+    return summarizeText(payload.thinking, 140);
+  }
+  if (typeof payload.output === "string" && payload.output.trim()) {
+    const tool = typeof payload.tool === "string" && payload.tool ? `${payload.tool}: ` : "";
+    return summarizeText(`${tool}${payload.output}`, 140);
+  }
+  if (Array.isArray(payload.tools) && payload.tools.length > 0) {
+    const toolNames = payload.tools
+      .map((item) => (item && typeof item === "object" && "name" in item ? String(item.name) : "tool"))
+      .join(", ");
+    return summarizeText(toolNames, 140);
+  }
+  return null;
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
