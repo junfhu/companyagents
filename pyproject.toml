@@ -1,0 +1,20 @@
+[project]
+name = "modern-delivery-os"
+version = "0.1.0"
+description = "Modern-company multi-agent workflow control plane."
+requires-python = ">=3.11"
+dependencies = [
+  "alembic>=1.13.0",
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "sqlalchemy>=2.0.0",
+  "asyncpg>=0.29.0",
+  "aiosqlite>=0.20.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.2.0",
+  "pytest>=8.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
