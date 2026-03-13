@@ -80,8 +80,6 @@ Then make sure `.env` contains:
 VITE_API_BASE=http://127.0.0.1:8100/api
 ```
 
-The default `frontend/.env.example` uses port `8000`, but the project's default
-`make` command starts the backend on `8100`, so update it accordingly.
 If other machines need to open the frontend, do not set this to `0.0.0.0`.
 Use the server's real IP or hostname instead, for example
 `http://192.168.1.10:8100/api`.
@@ -100,7 +98,14 @@ Default backend URL:
 http://0.0.0.0:8100
 ```
 
-Health checks:
+Local checks:
+
+```text
+http://127.0.0.1:8100/health
+http://127.0.0.1:8100/api
+```
+
+Remote checks:
 
 ```text
 http://SERVER_IP:8100/health
@@ -170,6 +175,8 @@ Check:
 
 - the backend is running
 - `VITE_API_BASE` points to `http://127.0.0.1:8100/api`
+
+If the frontend is opened from another machine, use the server IP or hostname instead.
 
 ### The backend starts but the UI errors out
 

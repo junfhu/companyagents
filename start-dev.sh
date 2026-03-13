@@ -52,8 +52,9 @@ FRONTEND_PID=$!
 echo "companyagents 已启动。"
 echo "后端日志: ${BACKEND_LOG}"
 echo "前端日志: ${FRONTEND_LOG}"
-echo "后端地址: http://127.0.0.1:${BACKEND_PORT}"
-echo "前端地址: http://127.0.0.1:${FRONTEND_PORT}"
+echo "监听地址: http://${HOST}:${BACKEND_PORT} (backend), http://${HOST}:${FRONTEND_PORT} (frontend)"
+echo "本机访问: http://127.0.0.1:${BACKEND_PORT} (backend), http://127.0.0.1:${FRONTEND_PORT} (frontend)"
+echo "远程访问: 请改用服务器实际 IP 或域名，不要使用 0.0.0.0 作为浏览器访问地址。"
 echo "按 Ctrl+C 可同时停止前后端。"
 
 wait -n "${BACKEND_PID}" "${FRONTEND_PID}"

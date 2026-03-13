@@ -1,6 +1,6 @@
 const API_BASE =
   (import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_API_BASE ??
-  "http://127.0.0.1:8000/api";
+  "http://127.0.0.1:8100/api";
 
 function toWsBase() {
   const normalized = API_BASE.replace(/\/api$/, "");

@@ -22,16 +22,29 @@ export APP_RUNTIME_WORKERS_ENABLED=true
 From repo root:
 
 ```bash
-uvicorn companyagents.backend.app.main:app --reload --port 8100
+uvicorn companyagents.backend.app.main:app --reload --host 0.0.0.0 --port 8100
 ```
 
 ## 3. Health Check
 
-Open:
+Bind address:
+
+```text
+http://0.0.0.0:8100
+```
+
+Local access:
 
 ```text
 http://127.0.0.1:8100/health
 http://127.0.0.1:8100/api
+```
+
+Remote access:
+
+```text
+http://SERVER_IP:8100/health
+http://SERVER_IP:8100/api
 ```
 
 ## 4. Current Feature Set
@@ -85,6 +98,7 @@ WebSocket endpoint:
 
 ```text
 ws://127.0.0.1:8100/ws?channels=global,task:TASK-123
+ws://SERVER_IP:8100/ws?channels=global,task:TASK-123
 ```
 
 The current implementation broadcasts task events to:

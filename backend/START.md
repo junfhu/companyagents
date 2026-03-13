@@ -24,16 +24,29 @@ export APP_RUNTIME_WORKERS_ENABLED=true
 在仓库根目录执行：
 
 ```bash
-uvicorn companyagents.backend.app.main:app --reload --port 8100
+uvicorn companyagents.backend.app.main:app --reload --host 0.0.0.0 --port 8100
 ```
 
 ## 3. 健康检查
 
-打开：
+监听地址：
+
+```text
+http://0.0.0.0:8100
+```
+
+本机访问：
 
 ```text
 http://127.0.0.1:8100/health
 http://127.0.0.1:8100/api
+```
+
+远程访问：
+
+```text
+http://服务器IP:8100/health
+http://服务器IP:8100/api
 ```
 
 ## 4. 当前功能集
@@ -87,6 +100,7 @@ WebSocket 端点：
 
 ```text
 ws://127.0.0.1:8100/ws?channels=global,task:TASK-123
+ws://服务器IP:8100/ws?channels=global,task:TASK-123
 ```
 
 当前实现会把任务事件广播到：

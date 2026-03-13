@@ -83,7 +83,6 @@ cp .env.example .env
 VITE_API_BASE=http://127.0.0.1:8100/api
 ```
 
-默认的 `frontend/.env.example` 是 `8000` 端口，如果你按项目默认的 `make` 命令启动后端，需要改成 `8100`。
 如果你准备让其他机器访问前端页面，这里不要写 `0.0.0.0`，而应该写服务器实际 IP 或域名，例如 `http://192.168.1.10:8100/api`。
 
 ## 6. 启动后端
@@ -100,7 +99,14 @@ make -C companyagents backend-dev
 http://0.0.0.0:8100
 ```
 
-可用于检查是否启动成功：
+本机检查：
+
+```text
+http://127.0.0.1:8100/health
+http://127.0.0.1:8100/api
+```
+
+远程检查：
 
 ```text
 http://服务器IP:8100/health
@@ -170,6 +176,8 @@ make -C companyagents backend-test
 
 - 后端是否已经启动
 - `VITE_API_BASE` 是否指向 `http://127.0.0.1:8100/api`
+
+如果前端是从另一台机器访问，则这里应改成服务器真实 IP 或域名。
 
 ### 后端启动了但页面报错
 
