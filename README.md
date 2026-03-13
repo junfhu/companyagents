@@ -15,8 +15,11 @@ The current scaffold already includes:
 - SQLite/Postgres-compatible SQLAlchemy models
 - Alembic scaffold and initial migration
 - task, plan, review, work item, artifact, activity, and intervention flows
-- React dashboard with Board, Attention, Teams, and Task Detail pages
+- actor-aware permission checks for write actions
+- React dashboard with Board, Attention, Teams, Task Detail, and Settings pages
 - WebSocket-based realtime refresh
+- lightweight runtime worker that auto-dispatches approved tasks
+- runtime status, audit, and manual control surfaces
 
 ## Current Status
 
@@ -31,6 +34,10 @@ This is no longer just a planning folder. The vertical slice already works for:
 7. update work item progress
 8. create artifacts
 9. inspect task bundle, dashboard bundle, teams, and activity
+10. let the runtime worker auto-create work items for approved plans
+11. let the runtime worker advance completed execution into reporting-ready and done states
+12. control runtime globally and per task from the UI
+13. audit runtime-generated work, events, and escalations
 
 Implemented backend highlights:
 
@@ -55,6 +62,12 @@ Implemented backend highlights:
 - `GET /api/dashboard/bundle`
 - `GET /api/teams`
 - `GET /api/teams/{team_name}/work-items`
+- `GET /api/runtime/status`
+- `POST /api/runtime/run-once`
+- `POST /api/runtime/pause`
+- `POST /api/runtime/resume`
+- `POST /api/runtime/tasks/{task_id}/run-once`
+- `POST /api/runtime/tasks/{task_id}/sweep`
 - WebSocket endpoint at `/ws`
 
 Implemented frontend highlights:
@@ -63,7 +76,9 @@ Implemented frontend highlights:
 - `Attention` queue page
 - `Teams` execution page
 - `Task Detail` drill-down page
+- `Settings` page for actor and runtime controls
 - task creation, planning, review, work item, progress, and artifact forms
+- runtime status panel, runtime audit views, and task-level runtime actions
 - realtime refresh from WebSocket events
 - demo seed script for realistic control-plane data
 
@@ -118,7 +133,7 @@ make -C modern_delivery_os seed-demo
 The scaffold is ready for the next implementation layer. Highest-value next
 items are:
 
-1. enrich supervisor policies and intervention UX
-2. add worker/runtime layer behind the current control plane
-3. add auth and role-based action controls
+1. add richer runtime policies, retries, and task-specific templates
+2. add deeper supervisor history UX and intervention analytics
+3. add Inbox/Templates pages to round out the product shell
 4. add demo seed scripts and richer end-to-end tests

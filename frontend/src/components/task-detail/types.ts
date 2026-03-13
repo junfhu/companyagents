@@ -11,6 +11,13 @@ export type DetailAction =
   | "escalate"
   | "replan";
 
+export type DetailActionRequest = {
+  reason?: string;
+  actorId?: string;
+};
+
+export type TaskRuntimeAction = "run-once" | "sweep";
+
 export type PlanFormState = {
   goal: string;
   acceptance: string;
@@ -45,6 +52,15 @@ export type ArtifactFormState = {
   path: string;
   summary: string;
   createdByRole: string;
+};
+
+export type SupervisorFormState = {
+  action: Extract<
+    DetailAction,
+    "pause" | "resume" | "retry" | "rollback" | "escalate" | "replan"
+  >;
+  reason: string;
+  actorId: string;
 };
 
 export type SubmitHandler = (event: FormEvent<HTMLFormElement>) => void | Promise<void>;

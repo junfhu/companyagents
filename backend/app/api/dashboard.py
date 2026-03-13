@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db
 from ..models import WorkItem
 from ..services.dashboard_service import DashboardService
 from ..services.task_bundle_service import TaskBundleService
-from ..services.work_item_service import WorkItemService
 from .work_items import to_work_item_out
 
 

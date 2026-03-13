@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 import { createArtifact } from "../api/artifacts";
-import { fetchDashboardAttention, fetchDashboardBundle } from "../api/dashboard";
+import { getActorContext, setActorContext as persistActorContext } from "../api/client";
+import { fetchDashboardAttention, fetchDashboardBundle, fetchRuntimeStatus } from "../api/dashboard";
 import { createPlan, submitForReview } from "../api/plans";
+import { pauseRuntime, resumeRuntime, runRuntimeOnce, runTaskRuntimeOnce, sweepTaskRuntime } from "../api/runtime";
 import { fetchTeamWorkItems } from "../api/teams";
 import {
   approveTask,
@@ -26,12 +28,15 @@ import type {
   ActivityEvent,
   AttentionQueues,
   DashboardSummary,
+  RuntimeStatus,
   Task,
   TaskBundle,
   TeamOverview,
   WorkItem,
 } from "../types";
-import type { DetailAction } from "../components/TaskDetailPanels";
+import type { DetailAction, DetailActionRequest, SupervisorFormState, TaskRuntimeAction } from "../components/TaskDetailPanels";
+
+export type { SupervisorFormState };
 
 export type TaskFormState = {
   title: string;
@@ -78,7 +83,9 @@ export type ArtifactFormState = {
 };
 
 export function useControlPlane(taskId: string | undefined, navigateToTask: (taskId: string) => void) {
+  const [actorContext, setActorContext] = useState(getActorContext());
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [runtime, setRuntime] = useState<RuntimeStatus | null>(null);
   const [attention, setAttention] = useState<AttentionQueues | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [bundle, setBundle] = useState<TaskBundle | null>(null);
@@ -96,6 +103,9 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
   const [creatingWorkItems, setCreatingWorkItems] = useState(false);
   const [updatingWorkItem, setUpdatingWorkItem] = useState(false);
   const [creatingArtifact, setCreatingArtifact] = useState(false);
+  const [runningAction, setRunningAction] = useState<DetailAction | "">("");
+  const [runtimeBusy, setRuntimeBusy] = useState(false);
+  const [taskRuntimeBusy, setTaskRuntimeBusy] = useState(false);
   const selectedTeamRef = useRef("");
   const overviewRefreshTimer = useRef<number | null>(null);
   const bundleRefreshTimer = useRef<number | null>(null);
@@ -140,6 +150,11 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     summary: "",
     createdByRole: "EngineeringTeam",
   });
+  const [supervisorForm, setSupervisorForm] = useState<SupervisorFormState>({
+    action: "pause",
+    reason: "",
+    actorId: "supervisor-ui",
+  });
 
   async function loadOverview(options?: { silent?: boolean }) {
     if (!options?.silent) {
@@ -147,8 +162,13 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     }
     setError("");
     try {
-      const [dashboardData, taskData] = await Promise.all([fetchDashboardBundle(), fetchTasks()]);
+      const [dashboardData, taskData, runtimeData] = await Promise.all([
+        fetchDashboardBundle(),
+        fetchTasks(),
+        fetchRuntimeStatus(),
+      ]);
       setSummary(dashboardData.summary);
+      setRuntime(runtimeData);
       setTasks(taskData.items);
       setAttention(dashboardData.attention);
       setRecentActivity(dashboardData.recent_activity);
@@ -212,6 +232,60 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     }
   }
 
+  async function runRuntimeControl(action: "run-once" | "pause" | "resume") {
+    setRuntimeBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const nextRuntime =
+        action === "run-once"
+          ? await runRuntimeOnce()
+          : action === "pause"
+            ? await pauseRuntime()
+            : await resumeRuntime();
+      setRuntime(nextRuntime);
+      setNotice(
+        action === "run-once"
+          ? "Runtime worker executed one orchestration cycle"
+          : action === "pause"
+            ? "Runtime worker paused"
+            : "Runtime worker resumed",
+      );
+      await loadOverview({ silent: true });
+      if (taskId) {
+        await loadBundle(taskId, { silent: true });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to control runtime worker");
+    } finally {
+      setRuntimeBusy(false);
+    }
+  }
+
+  async function runTaskRuntimeControl(action: TaskRuntimeAction) {
+    if (!bundle?.task) return;
+    setTaskRuntimeBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const result =
+        action === "run-once"
+          ? await runTaskRuntimeOnce(bundle.task.id)
+          : await sweepTaskRuntime(bundle.task.id);
+      setNotice(
+        action === "run-once"
+          ? `Ran runtime orchestration for ${result.task_id}`
+          : `Ran supervisor sweep for ${result.task_id}`,
+      );
+      await loadOverview({ silent: true });
+      await loadBundle(bundle.task.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to run task runtime action");
+    } finally {
+      setTaskRuntimeBusy(false);
+    }
+  }
+
   function scheduleOverviewRefresh() {
     if (overviewRefreshTimer.current !== null) {
       window.clearTimeout(overviewRefreshTimer.current);
@@ -245,8 +319,12 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
   }
 
   useEffect(() => {
+    persistActorContext(actorContext);
+  }, [actorContext]);
+
+  useEffect(() => {
     void loadOverview();
-  }, []);
+  }, [actorContext]);
 
   useEffect(() => {
     const socket = openGlobalSocket(() => {
@@ -256,7 +334,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     return () => {
       socket.close();
     };
-  }, []);
+  }, [actorContext]);
 
   useEffect(() => {
     if (taskId) {
@@ -264,7 +342,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     } else {
       setBundle(null);
     }
-  }, [taskId]);
+  }, [taskId, actorContext]);
 
   useEffect(() => {
     if (!taskId) return;
@@ -275,7 +353,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     return () => {
       socket.close();
     };
-  }, [taskId]);
+  }, [taskId, actorContext]);
 
   useEffect(() => {
     selectedTeamRef.current = selectedTeam;
@@ -306,27 +384,33 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     }));
   }, [bundle?.task.id, bundle?.work_items]);
 
-  async function runAction(action: DetailAction) {
+  async function runAction(action: DetailAction, request?: DetailActionRequest) {
     if (!bundle?.task) return;
     setNotice("");
     setError("");
+    setRunningAction(action);
     const currentTaskId = bundle.task.id;
     const planVersion = bundle.plan?.version ?? bundle.task.current_plan_version;
     try {
       if (action === "approve") await approveTask(currentTaskId, planVersion);
       if (action === "request-changes") await requestChanges(currentTaskId, planVersion);
       if (action === "reject") await rejectTask(currentTaskId, planVersion);
-      if (action === "pause") await pauseTask(currentTaskId);
-      if (action === "resume") await resumeTask(currentTaskId);
-      if (action === "retry") await retryTask(currentTaskId);
-      if (action === "rollback") await rollbackTask(currentTaskId);
-      if (action === "escalate") await escalateTask(currentTaskId);
-      if (action === "replan") await replanTask(currentTaskId);
+      if (action === "pause") await pauseTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
+      if (action === "resume") await resumeTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
+      if (action === "retry") await retryTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
+      if (action === "rollback") await rollbackTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
+      if (action === "escalate") await escalateTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
+      if (action === "replan") await replanTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
       setNotice(`Action completed: ${action}`);
+      if (["pause", "resume", "retry", "rollback", "escalate", "replan"].includes(action)) {
+        setSupervisorForm((current) => ({ ...current, reason: "" }));
+      }
       await loadOverview();
       await loadBundle(currentTaskId);
     } catch (err) {
       setError(err instanceof Error ? err.message : `Failed to ${action}`);
+    } finally {
+      setRunningAction("");
     }
   }
 
@@ -350,7 +434,6 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         tags: taskForm.tags.split(",").map((item) => item.trim()).filter(Boolean),
         meta: {},
       });
-      await qualifyTask(created.task_id, taskForm.summary.trim() || undefined);
       setTaskForm({
         title: "",
         summary: "",
@@ -358,7 +441,12 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         requester: "",
         tags: "",
       });
-      setNotice(`Created and qualified ${created.task_id}`);
+      if (actorContext.role === "IntakeCoordinator" || actorContext.role === "System") {
+        await qualifyTask(created.task_id, taskForm.summary.trim() || undefined);
+        setNotice(`Created and qualified ${created.task_id}`);
+      } else {
+        setNotice(`Created ${created.task_id}. Switch to IntakeCoordinator to qualify it.`);
+      }
       await loadOverview();
       navigateToTask(created.task_id);
     } catch (err) {
@@ -528,8 +616,10 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
 
   return {
     summary,
+    runtime,
     attention,
     tasks,
+    actorContext,
     bundle,
     teams,
     recentActivity,
@@ -545,18 +635,26 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     creatingWorkItems,
     updatingWorkItem,
     creatingArtifact,
+    runtimeBusy,
+    taskRuntimeBusy,
+    runningAction,
     taskForm,
     planForm,
     workItemForm,
     progressForm,
     artifactForm,
+    supervisorForm,
     setTaskForm,
+    setActorContext,
     setPlanForm,
     setWorkItemForm,
     setProgressForm,
     setArtifactForm,
+    setSupervisorForm,
     loadOverview,
     selectTeam,
+    runRuntimeControl,
+    runTaskRuntimeControl,
     runAction,
     handleCreateTask,
     handleCreatePlan,

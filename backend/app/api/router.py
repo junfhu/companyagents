@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import activity, artifacts, dashboard, plans, reviews, supervisor, tasks, work_items
+from . import activity, artifacts, dashboard, plans, reviews, runtime, supervisor, tasks, work_items
 
 
 router = APIRouter()
@@ -29,6 +29,7 @@ async def api_root() -> dict:
             "artifacts",
             "activity",
             "supervisor",
+            "runtime",
         ],
     }
 
@@ -41,3 +42,4 @@ router.include_router(artifacts.router)
 router.include_router(activity.router)
 router.include_router(supervisor.router)
 router.include_router(dashboard.router)
+router.include_router(runtime.router)

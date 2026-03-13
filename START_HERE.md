@@ -11,6 +11,8 @@ scaffold:
 - frontend builds successfully
 - local frontend and backend have been run together
 - realtime task events flow through WebSocket
+- runtime worker can auto-dispatch approved tasks and advance completed tasks
+- actor-based permissions and runtime control surfaces are wired end-to-end
 
 ## What Already Works
 
@@ -25,6 +27,10 @@ Backend flow:
 7. update work item progress
 8. create artifacts
 9. query task bundle and dashboard bundle
+10. let the runtime worker auto-create execution work items
+11. let the runtime worker advance completed tasks into reporting-ready and done
+12. control runtime globally and per task
+13. inspect runtime audit views from Board and Task Detail
 
 Frontend flow:
 
@@ -36,6 +42,8 @@ Frontend flow:
 6. update work item progress from UI
 7. create artifacts from UI
 8. inspect Board / Attention / Teams / Task Detail
+9. switch actor identity in UI
+10. control runtime from Board / Settings / Task Detail
 
 Demo support:
 
@@ -61,9 +69,9 @@ If you are getting oriented, open these first:
 If you are continuing implementation, the highest-value next steps are:
 
 1. add stronger supervisor policies and intervention history UX
-2. add seed/demo scripts for repeatable local showcases
-3. add auth and action-level permission checks
-4. add worker layer behind the control plane
+2. deepen worker policies beyond the current orchestrator
+3. add seed/demo scripts for repeatable local showcases
+4. add Inbox/Templates pages and broader settings coverage
 5. add deeper integration and end-to-end tests
 
 ## Definition Of Done For The Current Slice
@@ -77,3 +85,4 @@ The current slice should be considered healthy if:
 - dashboard bundle returns summary, attention, teams, and recent activity
 - task bundle returns task detail data for the control plane
 - WebSocket emits realtime task events
+- runtime can be controlled globally and per task

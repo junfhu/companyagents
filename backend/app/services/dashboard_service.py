@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta, timezone
+
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..config import get_settings
 from ..models import ActivityEvent, Task, WorkItem
 from ..models.enums import TaskState, WorkItemStatus
 from ..schemas.task import TaskOut
@@ -9,6 +12,7 @@ from ..schemas.task import TaskOut
 class DashboardService:
     def __init__(self, db: AsyncSession):
         self.db = db
+        self.settings = get_settings()
 
     async def build_summary(self) -> dict:
         task_total = await self.db.scalar(select(func.count()).select_from(Task))
@@ -102,6 +106,7 @@ class DashboardService:
         return {
             "recent": [self._task_to_out(task) for task in recent],
             "blocked": [self._task_to_out(task) for task in blocked],
+            "stalled": [self._task_to_out(task) for task in self._stalled_tasks(blocked)],
             "review": [self._task_to_out(task) for task in review],
             "priority": [self._task_to_out(task) for task in priority],
         }
@@ -165,7 +170,40 @@ class DashboardService:
         }
 
     def _task_to_out(self, task: Task) -> dict:
-        return TaskOut.model_validate(task).model_dump(mode="json")
+        return TaskOut(
+            id=task.id,
+            title=task.title,
+            summary=task.summary,
+            state=task.state.value,
+            priority=task.priority,
+            request_type=task.request_type,
+            source=task.source,
+            requester=task.requester,
+            owner_role=task.owner_role.value,
+            owner_team=task.owner_team,
+            current_plan_version=task.current_plan_version,
+            review_round=task.review_round,
+            blocked_reason=task.blocked_reason,
+            acceptance_summary=task.acceptance_summary,
+            tags=task.tags or [],
+            meta=task.meta or {},
+            archived=task.archived,
+            archived_at=task.archived_at.isoformat() if task.archived_at else None,
+            created_at=task.created_at.isoformat(),
+            updated_at=task.updated_at.isoformat(),
+        ).model_dump()
+
+    def _stalled_tasks(self, blocked: list[Task]) -> list[Task]:
+        if self.settings.runtime_blocked_escalation_seconds <= 0:
+            return []
+        cutoff = datetime.now(timezone.utc) - timedelta(seconds=self.settings.runtime_blocked_escalation_seconds)
+        return [task for task in blocked if self._as_utc(task.updated_at) <= cutoff][:5]
+
+    @staticmethod
+    def _as_utc(value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
 
     @staticmethod
     def _event_to_out(event: ActivityEvent) -> dict:

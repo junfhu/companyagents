@@ -308,6 +308,11 @@ small {
   color: #32404d;
 }
 
+.runtime-pill {
+  background: rgba(44, 142, 88, 0.14);
+  color: #15613a;
+}
+
 .list-card,
 .timeline-row {
   border-radius: 18px;
@@ -397,6 +402,16 @@ small {
   background: rgba(255, 244, 241, 0.9);
 }
 
+.runtime-card-active {
+  border-color: rgba(44, 142, 88, 0.16);
+  background: rgba(243, 252, 247, 0.94);
+}
+
+.runtime-audit-card {
+  border-color: rgba(44, 142, 88, 0.16);
+  background: rgba(243, 252, 247, 0.94);
+}
+
 .team-metrics {
   display: flex;
   gap: 0.6rem;
@@ -446,6 +461,11 @@ small {
   background: rgba(255, 243, 240, 0.92);
 }
 
+.queue-stalled {
+  border-color: rgba(120, 44, 34, 0.24);
+  background: rgba(255, 236, 232, 0.96);
+}
+
 .queue-inprogress {
   border-color: rgba(196, 123, 42, 0.18);
   background: rgba(255, 247, 234, 0.94);
@@ -467,12 +487,21 @@ small {
   gap: 0.75rem;
 }
 
+.runtime-event-row {
+  border-color: rgba(44, 142, 88, 0.16);
+  background: rgba(243, 252, 247, 0.94);
+}
+
 .timeline-bullet {
   width: 10px;
   height: 10px;
   border-radius: 999px;
   margin-top: 0.35rem;
   background: linear-gradient(135deg, #8e4b1f 0%, #d38655 100%);
+}
+
+.runtime-event-row .timeline-bullet {
+  background: linear-gradient(135deg, #2c8e58 0%, #64c38d 100%);
 }
 
 .timeline-payload {
@@ -491,6 +520,22 @@ small {
 .supervisor-summary.is-blocked {
   border-color: rgba(176, 58, 39, 0.18);
   background: rgba(255, 243, 240, 0.92);
+}
+
+.supervisor-control-form {
+  padding-top: 0.25rem;
+}
+
+.action-chip.is-disabled {
+  opacity: 0.45;
+  background: rgba(95, 38, 8, 0.06);
+}
+
+.inline-banner {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 16px;
+  background: rgba(142, 75, 31, 0.08);
 }
 
 .intervention-card.action-pause,

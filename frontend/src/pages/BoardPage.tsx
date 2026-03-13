@@ -1,17 +1,23 @@
-import type { ActivityEvent, AttentionQueues, DashboardSummary, Task } from "../types";
-import { ActivityPanel, TaskQueuePanel } from "../components/control-plane-panels";
+import type { ActivityEvent, AttentionQueues, DashboardSummary, RuntimeStatus, Task } from "../types";
+import { ActivityPanel, RuntimeAuditPanel, RuntimeStatusPanel, TaskQueuePanel } from "../components/control-plane-panels";
 
 export function BoardPage({
   summary,
   attention,
   tasks,
+  runtime,
+  runtimeBusy,
   recentActivity,
+  onRunRuntimeControl,
   onSelectTask,
 }: {
   summary: DashboardSummary | null;
   attention: AttentionQueues | null;
   tasks: Task[];
+  runtime: RuntimeStatus | null;
+  runtimeBusy: boolean;
   recentActivity: ActivityEvent[];
+  onRunRuntimeControl: (action: "run-once" | "pause" | "resume") => void | Promise<void>;
   onSelectTask: (taskId: string) => void;
 }) {
   const sortedTasks = [...tasks].sort((left, right) => right.updated_at.localeCompare(left.updated_at));
@@ -92,6 +98,14 @@ export function BoardPage({
           empty="No high-priority tasks right now."
           onSelectTask={onSelectTask}
         />
+        <RuntimeStatusPanel
+          runtime={runtime}
+          busy={runtimeBusy}
+          onRunNow={() => onRunRuntimeControl("run-once")}
+          onPause={() => onRunRuntimeControl("pause")}
+          onResume={() => onRunRuntimeControl("resume")}
+        />
+        <RuntimeAuditPanel activity={recentActivity} onSelectTask={onSelectTask} />
         <ActivityPanel
           title="Recent Activity"
           activity={recentActivity}

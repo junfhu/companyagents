@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db
+from ..models.enums import RoleType
+from ..security import ActorContext, require_actor
 from ..schemas.task import TaskCreate, TaskOut, TaskQualify
 from ..services.task_service import TaskService
 
@@ -35,7 +37,11 @@ def to_task_out(task) -> TaskOut:
 
 
 @router.post("", response_model=dict)
-async def create_task(body: TaskCreate, db: AsyncSession = Depends(get_db)):
+async def create_task(
+    body: TaskCreate,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.Human, RoleType.IntakeCoordinator, RoleType.System)),
+):
     svc = TaskService(db)
     task = await svc.create_task(body)
     return {"ok": True, "data": {"task_id": task.id, "state": task.state.value}}
@@ -62,11 +68,15 @@ async def get_task(task_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/{task_id}/qualify", response_model=dict)
-async def qualify_task(task_id: str, body: TaskQualify, db: AsyncSession = Depends(get_db)):
+async def qualify_task(
+    task_id: str,
+    body: TaskQualify,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.IntakeCoordinator, RoleType.System)),
+):
     svc = TaskService(db)
     try:
-        task = await svc.qualify_task(task_id, owner_id=body.owner_id, summary=body.summary)
+        task = await svc.qualify_task(task_id, owner_id=actor.actor_id, summary=body.summary)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {"ok": True, "data": {"task_id": task.id, "state": task.state.value}}
-

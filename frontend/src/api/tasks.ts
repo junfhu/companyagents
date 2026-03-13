@@ -1,6 +1,19 @@
 import { apiGet, apiPost } from "./client";
 import type { Task, TaskBundle } from "../types";
 
+type ReviewRequestOverrides = {
+  reviewer_id?: string;
+  comments?: string[];
+  summary?: string;
+};
+
+type SupervisorRequestOverrides = {
+  reason?: string;
+  actor_id?: string;
+  actor_role?: string;
+  meta?: Record<string, unknown>;
+};
+
 export function fetchTasks() {
   return apiGet<{ items: Task[] }>("/tasks");
 }
@@ -29,83 +42,74 @@ export function qualifyTask(taskId: string, summary?: string) {
   });
 }
 
-export function approveTask(taskId: string, planVersion: number) {
+export function approveTask(taskId: string, planVersion: number, overrides?: ReviewRequestOverrides) {
   return apiPost(`/tasks/${taskId}/approve`, {
     plan_version: planVersion,
-    reviewer_id: "reviewer-ui",
-    comments: ["Approved from dashboard"],
-    summary: "Approved in Task Detail",
+    reviewer_id: overrides?.reviewer_id ?? "reviewer-ui",
+    comments: overrides?.comments ?? ["Approved from dashboard"],
+    summary: overrides?.summary ?? "Approved in Task Detail",
   });
 }
 
-export function requestChanges(taskId: string, planVersion: number) {
+export function requestChanges(taskId: string, planVersion: number, overrides?: ReviewRequestOverrides) {
   return apiPost(`/tasks/${taskId}/request-changes`, {
     plan_version: planVersion,
-    reviewer_id: "reviewer-ui",
-    comments: ["Needs another planning pass"],
-    summary: "Returned for revision in Task Detail",
+    reviewer_id: overrides?.reviewer_id ?? "reviewer-ui",
+    comments: overrides?.comments ?? ["Needs another planning pass"],
+    summary: overrides?.summary ?? "Returned for revision in Task Detail",
   });
 }
 
-export function rejectTask(taskId: string, planVersion: number) {
+export function rejectTask(taskId: string, planVersion: number, overrides?: ReviewRequestOverrides) {
   return apiPost(`/tasks/${taskId}/reject`, {
     plan_version: planVersion,
-    reviewer_id: "reviewer-ui",
-    comments: ["Rejected from dashboard"],
-    summary: "Rejected in Task Detail",
+    reviewer_id: overrides?.reviewer_id ?? "reviewer-ui",
+    comments: overrides?.comments ?? ["Rejected from dashboard"],
+    summary: overrides?.summary ?? "Rejected in Task Detail",
   });
 }
 
-export function pauseTask(taskId: string) {
+function supervisorPayload(overrides?: SupervisorRequestOverrides, fallbackReason?: string) {
+  return {
+    reason: overrides?.reason ?? fallbackReason ?? "",
+    actor_id: overrides?.actor_id ?? "supervisor-ui",
+    actor_role: overrides?.actor_role ?? "WorkflowSupervisor",
+    meta: overrides?.meta ?? {},
+  };
+}
+
+export function pauseTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/pause`, {
-    reason: "Paused from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Paused from dashboard"),
   });
 }
 
-export function resumeTask(taskId: string) {
+export function resumeTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/resume`, {
-    reason: "Resumed from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Resumed from dashboard"),
   });
 }
 
-export function retryTask(taskId: string) {
+export function retryTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/retry`, {
-    reason: "Retry requested from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Retry requested from dashboard"),
   });
 }
 
-export function rollbackTask(taskId: string) {
+export function rollbackTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/rollback`, {
-    reason: "Rollback requested from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Rollback requested from dashboard"),
   });
 }
 
-export function escalateTask(taskId: string) {
+export function escalateTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/escalate`, {
-    reason: "Escalated from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Escalated from dashboard"),
   });
 }
 
-export function replanTask(taskId: string) {
+export function replanTask(taskId: string, overrides?: SupervisorRequestOverrides) {
   return apiPost(`/tasks/${taskId}/replan`, {
-    reason: "Replan requested from dashboard",
-    actor_id: "supervisor-ui",
-    actor_role: "WorkflowSupervisor",
-    meta: {},
+    ...supervisorPayload(overrides, "Replan requested from dashboard"),
   });
 }

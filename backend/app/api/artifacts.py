@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db
+from ..models.enums import RoleType
+from ..security import ActorContext, require_actor
 from ..schemas.artifact import ArtifactCreate, ArtifactOut
 from ..services.artifact_service import ArtifactService
 
@@ -35,11 +37,29 @@ async def list_artifacts(task_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/tasks/{task_id}/artifacts", response_model=dict)
-async def create_artifact(task_id: str, body: ArtifactCreate, db: AsyncSession = Depends(get_db)):
+async def create_artifact(
+    task_id: str,
+    body: ArtifactCreate,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(
+        require_actor(
+            RoleType.DeliveryManager,
+            RoleType.ReportingSpecialist,
+            RoleType.EngineeringTeam,
+            RoleType.DataTeam,
+            RoleType.ContentTeam,
+            RoleType.OperationsTeam,
+            RoleType.SecurityTeam,
+            RoleType.System,
+        )
+    ),
+):
     svc = ArtifactService(db)
     try:
-        artifact = await svc.create(task_id, body)
+        artifact = await svc.create(
+            task_id,
+            body.model_copy(update={"created_by_role": actor.role.value, "created_by_id": actor.actor_id}),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {"ok": True, "data": to_artifact_out(artifact).model_dump()}
-

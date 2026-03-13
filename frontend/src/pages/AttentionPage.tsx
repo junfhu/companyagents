@@ -13,6 +13,7 @@ export function AttentionPage({
   const queues = attention ?? {
     recent: [],
     blocked: [],
+    stalled: [],
     review: [],
     priority: [],
   };
@@ -30,6 +31,10 @@ export function AttentionPage({
           <article className="stat-card">
             <span>Blocked</span>
             <strong>{queues.blocked.length}</strong>
+          </article>
+          <article className="stat-card">
+            <span>Stalled</span>
+            <strong>{queues.stalled.length}</strong>
           </article>
           <article className="stat-card">
             <span>Needs Review</span>
@@ -52,6 +57,13 @@ export function AttentionPage({
           tasks={queues.blocked}
           variant="board-blocked"
           empty="No blocked tasks right now."
+          onSelectTask={onSelectTask}
+        />
+        <TaskQueuePanel
+          title="Stalled Blockers"
+          tasks={queues.stalled}
+          variant="queue-stalled"
+          empty="No stale blocked tasks right now."
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel

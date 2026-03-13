@@ -18,6 +18,9 @@ The current slice is scaffolded and wired to the backend control-plane APIs:
 - supervisor panel
 - task action buttons
 - teams overview
+- settings page
+- runtime status and audit panels
+- global and task-level runtime controls
 - realtime WebSocket refresh
 
 ## Run
@@ -34,6 +37,7 @@ The app expects the backend API at `VITE_API_BASE`.
 - Attention
 - Task Detail
 - Teams
+- Settings
 
 ## Implementation Notes
 
@@ -43,3 +47,5 @@ Current implementation favors:
 - bundle API for task detail and dashboard overview
 - WebSocket incremental refresh after first HTTP load
 - shared control-plane panels across Board, Attention, and Sidebar
+- actor-context switching for permission-aware writes
+- runtime control and audit visibility inside the UI

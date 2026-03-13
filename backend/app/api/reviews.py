@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db
+from ..models.enums import RoleType
+from ..security import ActorContext, require_actor
 from ..schemas.review import ReviewAction, ReviewOut
 from ..services.review_service import ReviewService
 
@@ -32,10 +34,18 @@ async def list_reviews(task_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/{task_id}/approve", response_model=dict)
-async def approve(task_id: str, body: ReviewAction, db: AsyncSession = Depends(get_db)):
+async def approve(
+    task_id: str,
+    body: ReviewAction,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.SolutionReviewer, RoleType.System)),
+):
     svc = ReviewService(db)
     try:
-        review, task = await svc.approve(task_id, body)
+        review, task = await svc.approve(
+            task_id,
+            body.model_copy(update={"reviewer_id": actor.actor_id}),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {
@@ -49,10 +59,18 @@ async def approve(task_id: str, body: ReviewAction, db: AsyncSession = Depends(g
 
 
 @router.post("/{task_id}/request-changes", response_model=dict)
-async def request_changes(task_id: str, body: ReviewAction, db: AsyncSession = Depends(get_db)):
+async def request_changes(
+    task_id: str,
+    body: ReviewAction,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.SolutionReviewer, RoleType.System)),
+):
     svc = ReviewService(db)
     try:
-        review, task = await svc.request_changes(task_id, body)
+        review, task = await svc.request_changes(
+            task_id,
+            body.model_copy(update={"reviewer_id": actor.actor_id}),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {
@@ -66,10 +84,18 @@ async def request_changes(task_id: str, body: ReviewAction, db: AsyncSession = D
 
 
 @router.post("/{task_id}/reject", response_model=dict)
-async def reject(task_id: str, body: ReviewAction, db: AsyncSession = Depends(get_db)):
+async def reject(
+    task_id: str,
+    body: ReviewAction,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.SolutionReviewer, RoleType.System)),
+):
     svc = ReviewService(db)
     try:
-        review, task = await svc.reject(task_id, body)
+        review, task = await svc.reject(
+            task_id,
+            body.model_copy(update={"reviewer_id": actor.actor_id}),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {
@@ -80,4 +106,3 @@ async def reject(task_id: str, body: ReviewAction, db: AsyncSession = Depends(ge
             "review": to_review_out(review).model_dump(),
         },
     }
-

@@ -1,8 +1,26 @@
 export type AttentionQueues = {
   recent: Task[];
   blocked: Task[];
+  stalled: Task[];
   review: Task[];
   priority: Task[];
+};
+
+export type RuntimeStatus = {
+  enabled: boolean;
+  configured_enabled: boolean;
+  running: boolean;
+  poll_interval_seconds: number;
+  blocked_escalation_seconds: number;
+  actor_id: string;
+  last_run_at: string | null;
+  last_result: {
+    generated_work_items: number;
+    dispatched_tasks: number;
+    ready_to_report_tasks: number;
+    completed_tasks: number;
+    escalated_tasks: number;
+  };
 };
 
 export type DashboardSummary = {
@@ -118,6 +136,9 @@ export type Artifact = {
   name: string;
   path_or_url: string;
   summary: string;
+  version?: number;
+  created_by_role?: string;
+  created_by_id?: string;
   meta: Record<string, unknown>;
   created_at: string;
 };

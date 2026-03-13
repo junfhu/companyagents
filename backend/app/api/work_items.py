@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db
+from ..models.enums import RoleType
+from ..security import ActorContext, require_actor
 from ..schemas.work_item import WorkItemCreateBatch, WorkItemOut, WorkItemProgress
 from ..services.work_item_service import WorkItemService
 
@@ -38,10 +40,15 @@ async def list_work_items(task_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/tasks/{task_id}/work-items", response_model=dict)
-async def create_work_items(task_id: str, body: WorkItemCreateBatch, db: AsyncSession = Depends(get_db)):
+async def create_work_items(
+    task_id: str,
+    body: WorkItemCreateBatch,
+    db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(require_actor(RoleType.DeliveryManager, RoleType.System)),
+):
     svc = WorkItemService(db)
     try:
-        items = await svc.create_batch(task_id, body)
+        items = await svc.create_batch(task_id, body.model_copy(update={"created_by_id": actor.actor_id}))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {"ok": True, "data": {"count": len(items), "items": [to_work_item_out(item).model_dump() for item in items]}}
@@ -52,11 +59,24 @@ async def update_work_item_progress(
     work_item_id: str,
     body: WorkItemProgress,
     db: AsyncSession = Depends(get_db),
+    actor: ActorContext = Depends(
+        require_actor(
+            RoleType.DeliveryManager,
+            RoleType.EngineeringTeam,
+            RoleType.DataTeam,
+            RoleType.ContentTeam,
+            RoleType.OperationsTeam,
+            RoleType.SecurityTeam,
+            RoleType.System,
+        )
+    ),
 ):
     svc = WorkItemService(db)
     try:
-        item = await svc.update_progress(work_item_id, body)
+        item = await svc.update_progress(
+            work_item_id,
+            body.model_copy(update={"actor_id": actor.actor_id, "actor_role": actor.role.value}),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     return {"ok": True, "data": to_work_item_out(item).model_dump()}
-

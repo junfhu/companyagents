@@ -8,7 +8,9 @@ import {
   PlanFormPanel,
   PlanPanel,
   ReviewsPanel,
+  RuntimeTaskAuditPanel,
   SupervisorPanel,
+  TaskRuntimeAction,
   TaskHeroPanel,
   TimelinePanel,
   WorkItemFormPanel,
@@ -19,6 +21,7 @@ import type {
   ArtifactFormState,
   PlanFormState,
   ProgressFormState,
+  SupervisorFormState,
   WorkItemFormState,
 } from "../hooks/useControlPlane";
 
@@ -29,15 +32,20 @@ export function TaskDetailPage({
   creatingWorkItems,
   updatingWorkItem,
   creatingArtifact,
+  taskRuntimeBusy,
   planForm,
   workItemForm,
   progressForm,
   artifactForm,
+  supervisorForm,
+  runningAction,
   onAction,
+  onTaskRuntimeAction,
   onPlanFormChange,
   onWorkItemFormChange,
   onProgressFormChange,
   onArtifactFormChange,
+  onSupervisorFormChange,
   onCreatePlan,
   onCreateWorkItem,
   onUpdateWorkItemProgress,
@@ -49,15 +57,20 @@ export function TaskDetailPage({
   creatingWorkItems: boolean;
   updatingWorkItem: boolean;
   creatingArtifact: boolean;
+  taskRuntimeBusy: boolean;
   planForm: PlanFormState;
   workItemForm: WorkItemFormState;
   progressForm: ProgressFormState;
   artifactForm: ArtifactFormState;
-  onAction: (action: DetailAction) => void | Promise<void>;
+  supervisorForm: SupervisorFormState;
+  runningAction: DetailAction | "";
+  onAction: (action: DetailAction, request?: { reason?: string; actorId?: string }) => void | Promise<void>;
+  onTaskRuntimeAction: (action: TaskRuntimeAction) => void | Promise<void>;
   onPlanFormChange: (updater: (current: PlanFormState) => PlanFormState) => void;
   onWorkItemFormChange: (updater: (current: WorkItemFormState) => WorkItemFormState) => void;
   onProgressFormChange: (updater: (current: ProgressFormState) => ProgressFormState) => void;
   onArtifactFormChange: (updater: (current: ArtifactFormState) => ArtifactFormState) => void;
+  onSupervisorFormChange: (updater: (current: SupervisorFormState) => SupervisorFormState) => void;
   onCreatePlan: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
   onCreateWorkItem: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
   onUpdateWorkItemProgress: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
@@ -74,7 +87,12 @@ export function TaskDetailPage({
 
   return (
     <div className="detail-grid">
-      <TaskHeroPanel task={bundle.task} onAction={onAction} />
+      <TaskHeroPanel
+        task={bundle.task}
+        onAction={onAction}
+        taskRuntimeBusy={taskRuntimeBusy}
+        onTaskRuntimeAction={onTaskRuntimeAction}
+      />
       <PlanPanel task={bundle.task} plan={bundle.plan} />
       <PlanFormPanel
         value={planForm}
@@ -99,6 +117,12 @@ export function TaskDetailPage({
         onSubmit={onUpdateWorkItemProgress}
       />
       <ReviewsPanel reviews={bundle.reviews} />
+      <RuntimeTaskAuditPanel
+        activity={bundle.activity}
+        workItems={bundle.work_items}
+        artifacts={bundle.artifacts}
+        interventions={bundle.interventions}
+      />
       <TimelinePanel activity={bundle.activity} detailLoading={detailLoading} />
       <ArtifactsPanel artifacts={bundle.artifacts} />
       <ArtifactFormPanel
@@ -108,7 +132,14 @@ export function TaskDetailPage({
         onChange={onArtifactFormChange}
         onSubmit={onCreateArtifact}
       />
-      <SupervisorPanel task={bundle.task} interventions={bundle.interventions} />
+      <SupervisorPanel
+        task={bundle.task}
+        interventions={bundle.interventions}
+        value={supervisorForm}
+        runningAction={runningAction}
+        onChange={onSupervisorFormChange}
+        onAction={onAction}
+      />
     </div>
   );
 }

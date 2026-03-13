@@ -9,6 +9,7 @@ from .config import get_settings
 from .db import init_db
 from .models import ActivityEvent, Artifact, InterventionLog, Task, TaskPlan, TaskReview, WorkItem  # noqa: F401
 from .realtime import ws_manager
+from .runtime_state import runtime_worker
 
 
 settings = get_settings()
@@ -18,7 +19,11 @@ settings = get_settings()
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     if settings.auto_create_tables:
         await init_db()
+    if settings.runtime_workers_enabled:
+        runtime_worker.start()
     yield
+    if settings.runtime_workers_enabled:
+        await runtime_worker.stop()
 
 
 app = FastAPI(

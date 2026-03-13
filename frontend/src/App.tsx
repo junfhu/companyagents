@@ -2,6 +2,7 @@ import { BrowserRouter, NavLink, Navigate, Route, Routes, useNavigate, useParams
 import { Sidebar } from "./components/Sidebar";
 import { AttentionPage } from "./pages/AttentionPage";
 import { BoardPage } from "./pages/BoardPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { TaskDetailPage } from "./pages/TaskDetailPage";
 import { TeamsPage } from "./pages/TeamsPage";
 import { useControlPlane } from "./hooks/useControlPlane";
@@ -21,9 +22,11 @@ function RoutedApp() {
         loading={controlPlane.loading}
         creatingTask={controlPlane.creatingTask}
         taskForm={controlPlane.taskForm}
+        actorContext={controlPlane.actorContext}
         onRefresh={controlPlane.loadOverview}
         onSelectTask={(selectedId) => navigate(`/tasks/${selectedId}`)}
         onTaskFormChange={controlPlane.setTaskForm}
+        onActorContextChange={controlPlane.setActorContext}
         onCreateTask={controlPlane.handleCreateTask}
       />
 
@@ -43,6 +46,9 @@ function RoutedApp() {
               </NavLink>
               <NavLink to="/teams" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
                 Teams
+              </NavLink>
+              <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+                Settings
               </NavLink>
               {taskId ? (
                 <NavLink
@@ -66,7 +72,10 @@ function RoutedApp() {
                 summary={controlPlane.summary}
                 attention={controlPlane.attention}
                 tasks={controlPlane.tasks}
+                runtime={controlPlane.runtime}
+                runtimeBusy={controlPlane.runtimeBusy}
                 recentActivity={controlPlane.recentActivity}
+                onRunRuntimeControl={controlPlane.runRuntimeControl}
                 onSelectTask={(selectedId) => navigate(`/tasks/${selectedId}`)}
               />
             }
@@ -95,6 +104,18 @@ function RoutedApp() {
             }
           />
           <Route
+            path="/settings"
+            element={
+              <SettingsPage
+                actorContext={controlPlane.actorContext}
+                runtime={controlPlane.runtime}
+                runtimeBusy={controlPlane.runtimeBusy}
+                onActorContextChange={controlPlane.setActorContext}
+                onRunRuntimeControl={controlPlane.runRuntimeControl}
+              />
+            }
+          />
+          <Route
             path="/tasks/:taskId"
             element={
               <TaskDetailPage
@@ -104,15 +125,20 @@ function RoutedApp() {
                 creatingWorkItems={controlPlane.creatingWorkItems}
                 updatingWorkItem={controlPlane.updatingWorkItem}
                 creatingArtifact={controlPlane.creatingArtifact}
+                taskRuntimeBusy={controlPlane.taskRuntimeBusy}
                 planForm={controlPlane.planForm}
                 workItemForm={controlPlane.workItemForm}
                 progressForm={controlPlane.progressForm}
                 artifactForm={controlPlane.artifactForm}
+                supervisorForm={controlPlane.supervisorForm}
+                runningAction={controlPlane.runningAction}
                 onAction={controlPlane.runAction}
+                onTaskRuntimeAction={controlPlane.runTaskRuntimeControl}
                 onPlanFormChange={controlPlane.setPlanForm}
                 onWorkItemFormChange={controlPlane.setWorkItemForm}
                 onProgressFormChange={controlPlane.setProgressForm}
                 onArtifactFormChange={controlPlane.setArtifactForm}
+                onSupervisorFormChange={controlPlane.setSupervisorForm}
                 onCreatePlan={controlPlane.handleCreatePlan}
                 onCreateWorkItem={controlPlane.handleCreateWorkItem}
                 onUpdateWorkItemProgress={controlPlane.handleUpdateWorkItemProgress}

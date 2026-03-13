@@ -1,5 +1,5 @@
 import { apiGet } from "./client";
-import type { AttentionQueues, DashboardBundle, DashboardSummary } from "../types";
+import type { AttentionQueues, DashboardBundle, DashboardSummary, RuntimeStatus } from "../types";
 
 export function fetchDashboardSummary() {
   return apiGet<DashboardSummary>("/dashboard/summary");
@@ -11,4 +11,8 @@ export function fetchDashboardAttention() {
 
 export function fetchDashboardBundle() {
   return apiGet<DashboardBundle>("/dashboard/bundle");
+}
+
+export function fetchRuntimeStatus() {
+  return apiGet<RuntimeStatus>("/runtime/status");
 }

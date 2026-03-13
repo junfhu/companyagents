@@ -39,6 +39,7 @@ class ArtifactService:
             meta=body.meta,
         )
         self.db.add(artifact)
+        await self.db.flush()
         await self.task_service._add_event(
             task_id=task_id,
             topic="artifact.created",
@@ -54,4 +55,3 @@ class ArtifactService:
             entity_id=artifact.id,
         )
         return artifact
-

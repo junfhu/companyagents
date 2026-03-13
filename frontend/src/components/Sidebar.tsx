@@ -1,5 +1,7 @@
 import type { FormEvent } from "react";
 
+import type { ActorContext } from "../api/client";
+import { ACTOR_ROLE_OPTIONS } from "../api/client";
 import { CompactAttentionCard } from "./control-plane-panels";
 import type { AttentionQueues, DashboardSummary, Task } from "../types";
 import { formatDate, statRows, summarizeText } from "../utils";
@@ -20,9 +22,11 @@ type SidebarProps = {
   loading: boolean;
   creatingTask: boolean;
   taskForm: TaskFormState;
+  actorContext: ActorContext;
   onRefresh: () => void | Promise<void>;
   onSelectTask: (taskId: string) => void;
   onTaskFormChange: (value: TaskFormState | ((current: TaskFormState) => TaskFormState)) => void;
+  onActorContextChange: (value: ActorContext | ((current: ActorContext) => ActorContext)) => void;
   onCreateTask: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
 };
 
@@ -34,9 +38,11 @@ export function Sidebar({
   loading,
   creatingTask,
   taskForm,
+  actorContext,
   onRefresh,
   onSelectTask,
   onTaskFormChange,
+  onActorContextChange,
   onCreateTask,
 }: SidebarProps) {
   const attentionSource = attention ?? summary?.attention ?? null;
@@ -66,6 +72,43 @@ export function Sidebar({
         <p className="eyebrow">AI Delivery Operating System</p>
         <h1>Control Plane</h1>
       </div>
+
+      <section className="panel">
+        <div className="panel-header">
+          <h2>Operator</h2>
+          <span className="muted">{actorContext.role}</span>
+        </div>
+        <div className="stack">
+          <select
+            className="text-input"
+            value={actorContext.role}
+            onChange={(event) =>
+              onActorContextChange((current) => ({
+                ...current,
+                role: event.target.value as ActorContext["role"],
+              }))
+            }
+          >
+            {ACTOR_ROLE_OPTIONS.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+          <input
+            className="text-input"
+            placeholder="Actor ID"
+            value={actorContext.actorId}
+            onChange={(event) =>
+              onActorContextChange((current) => ({
+                ...current,
+                actorId: event.target.value,
+              }))
+            }
+          />
+          <small>Write actions use these headers, and the backend now enforces role-based permissions.</small>
+        </div>
+      </section>
 
       <section className="panel">
         <div className="panel-header">

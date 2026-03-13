@@ -14,6 +14,7 @@ Example:
 export DATABASE_URL_OVERRIDE="sqlite+aiosqlite:///./delivery_os.db"
 export APP_AUTO_CREATE_TABLES=true
 export APP_DEBUG=true
+export APP_RUNTIME_WORKERS_ENABLED=true
 ```
 
 ## 2. Run API
@@ -44,6 +45,7 @@ The backend currently implements:
 - artifact creation and listing
 - activity timeline query
 - supervisor actions: pause, resume, retry, escalate, rollback, replan
+- actor-based permission checks via request headers
 - dashboard aggregation:
   - summary
   - attention
@@ -51,6 +53,15 @@ The backend currently implements:
   - recent activity
   - dashboard bundle
 - task detail aggregation via task bundle
+- runtime control:
+  - status
+  - run once
+  - pause / resume
+  - task-level run once / sweep
+- background runtime orchestration:
+  - auto-dispatch approved tasks into generated work items
+  - escalate stalled blocked tasks
+  - advance completed work into reporting-ready and done
 - WebSocket realtime events at `/ws`
 
 ## 5. Example Flow
@@ -65,6 +76,8 @@ The backend currently implements:
 8. `POST /api/tasks/{task_id}/artifacts`
 9. `GET /api/tasks/{task_id}/bundle`
 10. `GET /api/dashboard/bundle`
+11. `POST /api/runtime/run-once`
+12. `POST /api/runtime/tasks/{task_id}/run-once`
 
 ## 6. Realtime
 
@@ -87,6 +100,8 @@ Useful backend entry points:
 - `app/api/`: route layer
 - `app/services/dashboard_service.py`: global control-plane aggregation
 - `app/services/task_bundle_service.py`: single-task aggregation
+- `app/services/runtime_service.py`: runtime orchestration rules
+- `app/runtime.py`: worker loop and manual runtime controls
 - `app/services/workflow.py`: transition rules
 - `app/realtime.py`: WebSocket broadcast manager
 
