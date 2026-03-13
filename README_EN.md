@@ -114,6 +114,9 @@ modern_delivery_os/
 - Core design:
   - Chinese [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
   - English [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+- User guide:
+  - Chinese [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
+  - English [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
 - Backend docs:
   - Chinese [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
   - English [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
@@ -127,6 +130,7 @@ modern_delivery_os/
 ## Where To Look First
 
 - `docs/final-plan_EN.md`: final product and architecture direction
+- `docs/user-guide_EN.md`: installation and usage guide
 - `CHECKLIST_EN.md`: current completion checklist
 - `backend/START_EN.md`: local backend run guide
 - `frontend/README_EN.md`: frontend local run guide

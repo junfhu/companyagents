@@ -120,6 +120,9 @@ modern_delivery_os/
 - 核心设计：
   - 中文 [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
   - 英文 [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+- 用户指南：
+  - 中文 [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
+  - 英文 [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
 - 后端说明：
   - 中文 [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
   - 英文 [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
@@ -133,6 +136,7 @@ modern_delivery_os/
 ## 建议先看哪里
 
 - `docs/final-plan.md`：最终产品方向和架构规划
+- `docs/user-guide.md`：用户安装与使用说明
 - `CHECKLIST.md`：当前完成度清单
 - `backend/START.md`：后端本地运行说明
 - `frontend/README.md`：前端本地运行说明
