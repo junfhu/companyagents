@@ -80,10 +80,15 @@ cp .env.example .env
 然后确认 `.env` 中包含：
 
 ```text
-VITE_API_BASE=http://127.0.0.1:8100/api
+VITE_BACKEND_PORT=8100
 ```
 
-如果你准备让其他机器访问前端页面，这里不要写 `0.0.0.0`，而应该写服务器实际 IP 或域名，例如 `http://192.168.1.10:8100/api`。
+默认情况下，前端会自动复用你当前打开页面的主机名，并把 API 请求发到 `:8100`。
+如果你需要把前端连到另一台 API 服务器，再额外设置：
+
+```text
+VITE_API_BASE=http://192.168.1.10:8100/api
+```
 
 ## 6. 启动后端
 
@@ -175,9 +180,9 @@ make -C companyagents backend-test
 优先检查：
 
 - 后端是否已经启动
-- `VITE_API_BASE` 是否指向 `http://127.0.0.1:8100/api`
+- `VITE_BACKEND_PORT` 是否与后端端口一致
 
-如果前端是从另一台机器访问，则这里应改成服务器真实 IP 或域名。
+如果前端需要连到另一台 API 服务器，再显式配置 `VITE_API_BASE`。
 
 ### 后端启动了但页面报错
 

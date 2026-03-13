@@ -1,6 +1,22 @@
-const API_BASE =
-  (import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_API_BASE ??
-  "http://127.0.0.1:8100/api";
+const env = (import.meta as ImportMeta & { env?: Record<string, string> }).env;
+
+function resolveApiBase() {
+  const explicitBase = env?.VITE_API_BASE?.trim();
+  if (explicitBase) {
+    return explicitBase;
+  }
+
+  const backendPort = env?.VITE_BACKEND_PORT?.trim() || "8100";
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const hostname = window.location.hostname || "127.0.0.1";
+    return `${protocol}//${hostname}:${backendPort}/api`;
+  }
+
+  return `http://127.0.0.1:${backendPort}/api`;
+}
+
+export const API_BASE = resolveApiBase();
 const ACTOR_STORAGE_KEY = "companyagents.actor";
 
 export const ACTOR_ROLE_OPTIONS = [

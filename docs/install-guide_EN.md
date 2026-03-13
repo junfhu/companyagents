@@ -77,12 +77,16 @@ cp .env.example .env
 Then make sure `.env` contains:
 
 ```text
-VITE_API_BASE=http://127.0.0.1:8100/api
+VITE_BACKEND_PORT=8100
 ```
 
-If other machines need to open the frontend, do not set this to `0.0.0.0`.
-Use the server's real IP or hostname instead, for example
-`http://192.168.1.10:8100/api`.
+By default, the frontend will reuse the hostname of the page you opened and
+send API requests to port `8100`.
+If you need the frontend to talk to a different API server, set:
+
+```text
+VITE_API_BASE=http://192.168.1.10:8100/api
+```
 
 ## 6. Start The Backend
 
@@ -174,9 +178,9 @@ make -C companyagents backend-test
 Check:
 
 - the backend is running
-- `VITE_API_BASE` points to `http://127.0.0.1:8100/api`
+- `VITE_BACKEND_PORT` matches the backend port
 
-If the frontend is opened from another machine, use the server IP or hostname instead.
+If the frontend should talk to a different API server, set `VITE_API_BASE` explicitly.
 
 ### The backend starts but the UI errors out
 

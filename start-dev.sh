@@ -45,7 +45,7 @@ BACKEND_PID=$!
 echo "启动前端..."
 (
   cd "${ROOT_DIR}/frontend"
-  VITE_API_BASE="${VITE_API_BASE:-http://127.0.0.1:${BACKEND_PORT}/api}" npm run dev -- --host "${HOST}" --port "${FRONTEND_PORT}"
+  VITE_BACKEND_PORT="${VITE_BACKEND_PORT:-${BACKEND_PORT}}" npm run dev -- --host "${HOST}" --port "${FRONTEND_PORT}"
 ) >"${FRONTEND_LOG}" 2>&1 &
 FRONTEND_PID=$!
 
