@@ -31,4 +31,4 @@ The backend already exposes:
 
 ## Local Run
 
-Use the detailed guide in [START.md](/root/edict/modern_delivery_os/backend/START.md).
+Use the detailed guide in [START_EN.md](/root/edict/modern_delivery_os/backend/START_EN.md).

@@ -1,14 +1,16 @@
-# Backend Start Guide
+# 后端启动指南
 
-## Local Dev Mode
+English version: `START_EN.md`
 
-Use SQLite first for the fastest local loop.
+## 本地开发模式
 
-## 1. Set Environment
+本地最快的开发回路建议先用 SQLite。
 
-Copy values from `.env.example`.
+## 1. 设置环境变量
 
-Example:
+参考 `.env.example` 配置环境变量。
+
+示例：
 
 ```bash
 export DATABASE_URL_OVERRIDE="sqlite+aiosqlite:///./delivery_os.db"
@@ -17,54 +19,54 @@ export APP_DEBUG=true
 export APP_RUNTIME_WORKERS_ENABLED=true
 ```
 
-## 2. Run API
+## 2. 启动 API
 
-From repo root:
+在仓库根目录执行：
 
 ```bash
 uvicorn modern_delivery_os.backend.app.main:app --reload --port 8100
 ```
 
-## 3. Health Check
+## 3. 健康检查
 
-Open:
+打开：
 
 ```text
 http://127.0.0.1:8100/health
 http://127.0.0.1:8100/api
 ```
 
-## 4. Current Feature Set
+## 4. 当前功能集
 
-The backend currently implements:
+后端目前已实现：
 
-- task lifecycle: create, qualify, inspect
-- plan lifecycle: create, inspect, submit for review
-- review lifecycle: approve, request changes, reject
-- work item lifecycle: create, progress update
-- artifact creation and listing
-- activity timeline query
-- supervisor actions: pause, resume, retry, escalate, rollback, replan
-- actor-based permission checks via request headers
-- dashboard aggregation:
+- 任务生命周期：create、qualify、inspect
+- 计划生命周期：create、inspect、submit for review
+- 审核生命周期：approve、request changes、reject
+- work item 生命周期：create、progress update
+- artifact 创建与查询
+- activity timeline 查询
+- supervisor 动作：pause、resume、retry、escalate、rollback、replan
+- 通过请求头进行基于 actor 的权限校验
+- dashboard 聚合：
   - summary
   - attention
   - teams
   - recent activity
   - dashboard bundle
-- task detail aggregation via task bundle
-- runtime control:
+- 通过 task bundle 聚合任务详情
+- runtime 控制：
   - status
   - run once
   - pause / resume
   - task-level run once / sweep
-- background runtime orchestration:
-  - auto-dispatch approved tasks into generated work items
-  - escalate stalled blocked tasks
-  - advance completed work into reporting-ready and done
-- WebSocket realtime events at `/ws`
+- 后台 runtime orchestration：
+  - 自动把 approved 任务派发成生成的 work items
+  - 自动升级长时间 stalled 的 blocked 任务
+  - 自动把已完成工作推进到 reporting-ready 和 done
+- `/ws` WebSocket 实时事件
 
-## 5. Example Flow
+## 5. 示例链路
 
 1. `POST /api/tasks`
 2. `POST /api/tasks/{task_id}/qualify`
@@ -79,54 +81,54 @@ The backend currently implements:
 11. `POST /api/runtime/run-once`
 12. `POST /api/runtime/tasks/{task_id}/run-once`
 
-## 6. Realtime
+## 6. 实时能力
 
-WebSocket endpoint:
+WebSocket 端点：
 
 ```text
 ws://127.0.0.1:8100/ws?channels=global,task:TASK-123
 ```
 
-The current implementation broadcasts task events to:
+当前实现会把任务事件广播到：
 
 - `global`
 - `task:{task_id}`
 
-## 7. Project Structure Notes
+## 7. 项目结构提示
 
-Useful backend entry points:
+值得优先看的后端入口：
 
-- `app/main.py`: FastAPI app and lifespan setup
-- `app/api/`: route layer
-- `app/services/dashboard_service.py`: global control-plane aggregation
-- `app/services/task_bundle_service.py`: single-task aggregation
-- `app/services/runtime_service.py`: runtime orchestration rules
-- `app/runtime.py`: worker loop and manual runtime controls
-- `app/services/workflow.py`: transition rules
-- `app/realtime.py`: WebSocket broadcast manager
+- `app/main.py`：FastAPI 应用和 lifespan 初始化
+- `app/api/`：路由层
+- `app/services/dashboard_service.py`：全局控制面聚合
+- `app/services/task_bundle_service.py`：单任务聚合
+- `app/services/runtime_service.py`：runtime orchestration 规则
+- `app/runtime.py`：worker 循环和手动 runtime 控制
+- `app/services/workflow.py`：状态流转规则
+- `app/realtime.py`：WebSocket 广播管理器
 
-## 8. Migrations
+## 8. Migration
 
-Initial Alembic scaffold is included under:
+初始 Alembic 脚手架位于：
 
 ```text
 modern_delivery_os/backend/migration/
 ```
 
-For MVP development, `APP_AUTO_CREATE_TABLES=true` is acceptable.
-Once schema stabilizes, prefer migrations for all changes.
+在 MVP 开发阶段，`APP_AUTO_CREATE_TABLES=true` 是可接受的。
+当 schema 稳定后，更推荐所有变更都通过 migration 管理。
 
 ## 9. Demo Seed
 
-To create a few realistic tasks for Board, Attention, Teams, and Task Detail:
+如果你想为 Board、Attention、Teams、Task Detail 生成更真实的样例任务，可以执行：
 
 ```bash
 python -m modern_delivery_os.backend.scripts.seed_demo
 ```
 
-The seed currently creates examples for:
+当前 seed 会生成：
 
-- task waiting in review
-- task actively executing
-- blocked task with supervisor intervention
-- task sent back for plan changes
+- 等待审核的任务
+- 执行中的任务
+- 已阻塞且带 supervisor intervention 的任务
+- 被退回修改计划的任务

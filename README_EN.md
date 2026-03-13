@@ -99,8 +99,8 @@ modern_delivery_os/
 ## Where To Look First
 
 - `docs/final-plan.md`: final product and architecture direction
-- `backend/START.md`: local backend run guide
-- `frontend/README.md`: frontend local run guide
+- `backend/START_EN.md`: local backend run guide
+- `frontend/README_EN.md`: frontend local run guide
 - `backend/app/main.py`: FastAPI entrypoint
 - `frontend/src/App.tsx`: app shell and routing
 
