@@ -99,7 +99,7 @@ modern_delivery_os/
 
 ## Where To Look First
 
-- `docs/final-plan.md`: final product and architecture direction
+- `docs/final-plan_EN.md`: final product and architecture direction
 - `CHECKLIST_EN.md`: current completion checklist
 - `backend/START_EN.md`: local backend run guide
 - `frontend/README_EN.md`: frontend local run guide

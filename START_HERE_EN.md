@@ -56,7 +56,7 @@ If you are getting oriented, open these first:
 
 1. `README.md` (Chinese default)
 2. `README_EN.md` (English version)
-3. `docs/final-plan.md`
+3. `docs/final-plan_EN.md`
 4. `backend/START_EN.md`
 5. `backend/app/main.py`
 6. `backend/app/api/router.py`

@@ -1,11 +1,9 @@
-# 最终方案
+# Final Plan
 
-English version: `final-plan_EN.md`
+## Product Definition
 
-## 产品定义
-
-AI Delivery Operating System 是一套面向现代公司的多智能体工作流平台，
-目标是把自然语言请求转成结构化执行链路，核心流程包括：
+AI Delivery Operating System is a modern-company multi-agent workflow platform
+that turns natural-language requests into structured execution through:
 
 1. Intake
 2. Planning
@@ -15,7 +13,7 @@ AI Delivery Operating System 是一套面向现代公司的多智能体工作流
 6. Reporting
 7. Supervisor recovery
 
-## 核心角色
+## Core Roles
 
 - Intake Coordinator
 - Project Manager
@@ -29,7 +27,7 @@ AI Delivery Operating System 是一套面向现代公司的多智能体工作流
 - Reporting Specialist
 - Workflow Supervisor
 
-## 主要任务状态
+## Main Task States
 
 - `New`
 - `NeedsClarification`
@@ -47,7 +45,7 @@ AI Delivery Operating System 是一套面向现代公司的多智能体工作流
 - `Cancelled`
 - `Archived`
 
-## 核心实体
+## Core Entities
 
 - `Task`
 - `TaskPlan`
@@ -57,11 +55,11 @@ AI Delivery Operating System 是一套面向现代公司的多智能体工作流
 - `ActivityEvent`
 - `InterventionLog`
 
-## MVP 架构
+## MVP Architecture
 
 - FastAPI control plane
-- Postgres 数据存储
-- Redis Streams 事件总线
+- Postgres data store
+- Redis Streams event bus
 - Python workers
 - React dashboard
-- WebSocket 实时更新
+- WebSocket realtime updates
