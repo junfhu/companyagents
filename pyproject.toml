@@ -18,3 +18,25 @@ dependencies = [
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+  "modern_delivery_os",
+  "modern_delivery_os.backend",
+  "modern_delivery_os.backend.app",
+  "modern_delivery_os.backend.app.api",
+  "modern_delivery_os.backend.app.models",
+  "modern_delivery_os.backend.app.schemas",
+  "modern_delivery_os.backend.app.services",
+  "modern_delivery_os.backend.scripts",
+]
+
+[tool.setuptools.package-dir]
+modern_delivery_os = "."
+"modern_delivery_os.backend" = "backend"
+"modern_delivery_os.backend.app" = "backend/app"
+"modern_delivery_os.backend.app.api" = "backend/app/api"
+"modern_delivery_os.backend.app.models" = "backend/app/models"
+"modern_delivery_os.backend.app.schemas" = "backend/app/schemas"
+"modern_delivery_os.backend.app.services" = "backend/app/services"
+"modern_delivery_os.backend.scripts" = "backend/scripts"
