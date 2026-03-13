@@ -3,6 +3,16 @@ import { useMemo, useState } from "react";
 import type { Artifact, Intervention, Plan, Review, Task, WorkItem, ActivityEvent } from "../../types";
 import { formatDate, summarizeText } from "../../utils";
 import type { DetailAction, DetailActionRequest, SupervisorFormState, TaskRuntimeAction } from "./types";
+import {
+  translateArtifactType,
+  translatePriority,
+  translateReviewResult,
+  translateRole,
+  translateState,
+  translateSupervisorAction,
+  translateWorkItemStatus,
+  useI18n,
+} from "../../i18n";
 
 const TERMINAL_STATES = new Set(["Cancelled", "Archived"]);
 
@@ -61,37 +71,38 @@ export function TaskHeroPanel({
   taskRuntimeBusy: boolean;
   onTaskRuntimeAction: (action: TaskRuntimeAction) => void | Promise<void>;
 }) {
+  const { language, t } = useI18n();
   const inReview = task.state === "InReview";
 
   return (
     <section className="panel hero-panel">
       <div className="task-meta">
         <div>
-          <span className="pill">{task.state}</span>
+          <span className="pill">{translateState(language, task.state)}</span>
           <h3>{task.id}</h3>
         </div>
         <div className="meta-lines">
-          <span>Owner: {task.owner_role}</span>
-          <span>Priority: {task.priority}</span>
-          <span>Updated: {formatDate(task.updated_at)}</span>
+          <span>{t("common.owner")}: {translateRole(language, task.owner_role)}</span>
+          <span>{t("common.priority")}: {translatePriority(language, task.priority)}</span>
+          <span>{t("common.updated")}: {formatDate(task.updated_at)}</span>
         </div>
       </div>
-      <p className="summary-copy">{task.summary || "No summary yet."}</p>
+      <p className="summary-copy">{task.summary || t("common.noSummary")}</p>
       <div className="action-row">
         <button disabled={!inReview} onClick={() => void onAction("approve")}>
-          Approve
+          {t("taskDetail.approve")}
         </button>
         <button disabled={!inReview} onClick={() => void onAction("request-changes")}>
-          Request Changes
+          {t("taskDetail.requestChanges")}
         </button>
         <button disabled={!inReview} onClick={() => void onAction("reject")}>
-          Reject
+          {t("taskDetail.reject")}
         </button>
         <button className="ghost-button" disabled={taskRuntimeBusy} onClick={() => void onTaskRuntimeAction("run-once")}>
-          {taskRuntimeBusy ? "Running..." : "Runtime Run"}
+          {taskRuntimeBusy ? t("common.running") : t("taskDetail.runtimeRun")}
         </button>
         <button className="ghost-button" disabled={taskRuntimeBusy} onClick={() => void onTaskRuntimeAction("sweep")}>
-          Supervisor Sweep
+          {t("taskDetail.supervisorSweep")}
         </button>
       </div>
     </section>
@@ -99,10 +110,11 @@ export function TaskHeroPanel({
 }
 
 export function PlanPanel({ task, plan }: { task: Task; plan: Plan | null }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Plan</h3>
+        <h3>{t("taskDetail.plan")}</h3>
         <span className="muted">v{(plan?.version ?? task.current_plan_version) || 0}</span>
       </div>
       {plan ? (
@@ -110,7 +122,7 @@ export function PlanPanel({ task, plan }: { task: Task; plan: Plan | null }) {
           <p>{plan.goal}</p>
           {plan.scope.length > 0 ? (
             <div>
-              <h4>Scope</h4>
+              <h4>{t("taskDetail.scope")}</h4>
               <div className="chip-row">
                 {plan.scope.map((item) => (
                   <span key={item} className="chip">
@@ -121,7 +133,7 @@ export function PlanPanel({ task, plan }: { task: Task; plan: Plan | null }) {
             </div>
           ) : null}
           <div>
-            <h4>Acceptance</h4>
+            <h4>{t("taskDetail.acceptance")}</h4>
             <ul>
               {plan.acceptance_criteria.map((item) => (
                 <li key={item}>{item}</li>
@@ -129,18 +141,18 @@ export function PlanPanel({ task, plan }: { task: Task; plan: Plan | null }) {
             </ul>
           </div>
           <div>
-            <h4>Teams</h4>
+            <h4>{t("teams.teams")}</h4>
             <div className="chip-row">
               {plan.required_teams.map((team) => (
                 <span key={team} className="chip">
-                  {team}
+                  {translateRole(language, team)}
                 </span>
               ))}
             </div>
           </div>
           {plan.risks.length > 0 ? (
             <div>
-              <h4>Risks</h4>
+              <h4>{t("taskDetail.risks")}</h4>
               <ul>
                 {plan.risks.map((item) => (
                   <li key={item}>{item}</li>
@@ -150,35 +162,36 @@ export function PlanPanel({ task, plan }: { task: Task; plan: Plan | null }) {
           ) : null}
         </div>
       ) : (
-        <p className="muted">No plan yet.</p>
+        <p className="muted">{t("common.noPlanYet")}</p>
       )}
     </section>
   );
 }
 
 export function WorkItemsPanel({ workItems }: { workItems: WorkItem[] }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Work Items</h3>
+        <h3>{t("teams.workItems")}</h3>
         <span className="muted">{workItems.length}</span>
       </div>
       <div className="stack">
-        {workItems.length === 0 ? <p className="muted">No work items yet.</p> : null}
+        {workItems.length === 0 ? <p className="muted">{t("common.noWorkItemsYet")}</p> : null}
         {workItems.map((item) => (
           <article key={item.id} className={`list-card work-item-card status-${item.status.toLowerCase()}`}>
             <div className="list-card-top">
               <strong>{item.title}</strong>
               <div className="chip-row">
-                {isRuntimeGenerated(item) ? <span className="pill runtime-pill">Runtime</span> : null}
-                <span className="pill subtle">{item.status}</span>
+                {isRuntimeGenerated(item) ? <span className="pill runtime-pill">{t("common.runtimeBadge")}</span> : null}
+                <span className="pill subtle">{translateWorkItemStatus(language, item.status)}</span>
               </div>
             </div>
-            <p>{summarizeText(item.description || "No description.", 180)}</p>
+            <p>{summarizeText(item.description || t("teams.noDescription"), 180)}</p>
             <div className="team-metrics">
-              <span>Team: {item.assigned_team || "-"}</span>
-              <span>Priority: {item.priority}</span>
-              <span>Updated: {formatDate(item.updated_at)}</span>
+              <span>{t("common.team")}: {translateRole(language, item.assigned_team || "-")}</span>
+              <span>{t("common.priority")}: {translatePriority(language, item.priority)}</span>
+              <span>{t("common.updated")}: {formatDate(item.updated_at)}</span>
             </div>
             {item.acceptance_criteria.length > 0 ? (
               <div className="chip-row">
@@ -189,7 +202,7 @@ export function WorkItemsPanel({ workItems }: { workItems: WorkItem[] }) {
                 ))}
               </div>
             ) : null}
-            {item.block_reason ? <small>Blocker: {item.block_reason}</small> : null}
+            {item.block_reason ? <small>{t("common.blocker")}: {item.block_reason}</small> : null}
           </article>
         ))}
       </div>
@@ -198,24 +211,25 @@ export function WorkItemsPanel({ workItems }: { workItems: WorkItem[] }) {
 }
 
 export function ReviewsPanel({ reviews }: { reviews: Review[] }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Reviews</h3>
+        <h3>{t("taskDetail.reviews")}</h3>
         <span className="muted">{reviews.length}</span>
       </div>
       <div className="stack">
-        {reviews.length === 0 ? <p className="muted">No reviews yet.</p> : null}
+        {reviews.length === 0 ? <p className="muted">{t("common.noReviewsYet")}</p> : null}
         {reviews.map((review) => (
           <article key={review.id} className={`list-card review-card review-${review.result.toLowerCase()}`}>
             <div className="list-card-top">
-              <strong>{review.result}</strong>
+              <strong>{translateReviewResult(language, review.result)}</strong>
               <div className="chip-row">
-                <span className="pill subtle">Round {review.review_round}</span>
-                <span className="pill subtle">{review.reviewer_role}</span>
+                <span className="pill subtle">{t("taskDetail.reviewRound")} {review.review_round}</span>
+                <span className="pill subtle">{translateRole(language, review.reviewer_role)}</span>
               </div>
             </div>
-            <p>{review.summary || "No summary."}</p>
+            <p>{review.summary || t("common.noSummary")}</p>
             <ul>
               {review.comments.map((comment) => (
                 <li key={comment}>{comment}</li>
@@ -235,24 +249,25 @@ export function TimelinePanel({
   activity: ActivityEvent[];
   detailLoading: boolean;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Timeline</h3>
-        <span className="muted">{detailLoading ? "Refreshing..." : activity.length}</span>
+        <h3>{t("taskDetail.timeline")}</h3>
+        <span className="muted">{detailLoading ? t("taskDetail.refreshing") : activity.length}</span>
       </div>
       <div className="stack timeline">
-        {activity.length === 0 ? <p className="muted">No events yet.</p> : null}
+        {activity.length === 0 ? <p className="muted">{t("common.noEventsYet")}</p> : null}
         {activity.map((event) => (
           <article key={event.id} className={`timeline-row ${isRuntimeEvent(event) ? "runtime-event-row" : ""}`}>
             <div className="timeline-bullet" />
             <div>
               <div className="list-card-top">
                 <strong>{event.topic}</strong>
-                {isRuntimeEvent(event) ? <span className="pill runtime-pill">Runtime</span> : null}
+                {isRuntimeEvent(event) ? <span className="pill runtime-pill">{t("common.runtimeBadge")}</span> : null}
               </div>
               <p>
-                {event.actor_role}
+                {translateRole(language, event.actor_role)}
                 {event.entity_type ? ` · ${event.entity_type}` : ""}
               </p>
               {renderEventPayload(event)}
@@ -266,21 +281,22 @@ export function TimelinePanel({
 }
 
 export function ArtifactsPanel({ artifacts }: { artifacts: Artifact[] }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Artifacts</h3>
+        <h3>{t("taskDetail.artifacts")}</h3>
         <span className="muted">{artifacts.length}</span>
       </div>
       <div className="stack">
-        {artifacts.length === 0 ? <p className="muted">No artifacts yet.</p> : null}
+        {artifacts.length === 0 ? <p className="muted">{t("common.noArtifactsYet")}</p> : null}
         {artifacts.map((artifact) => (
           <article key={artifact.id} className="list-card">
             <div className="list-card-top">
               <strong>{artifact.name}</strong>
               <div className="chip-row">
-                {isRuntimeArtifact(artifact) ? <span className="pill runtime-pill">Runtime</span> : null}
-                <span className="pill subtle">{artifact.type}</span>
+                {isRuntimeArtifact(artifact) ? <span className="pill runtime-pill">{t("common.runtimeBadge")}</span> : null}
+                <span className="pill subtle">{translateArtifactType(language, artifact.type)}</span>
               </div>
             </div>
             <p>{artifact.summary || artifact.path_or_url}</p>
@@ -303,6 +319,7 @@ export function RuntimeTaskAuditPanel({
   artifacts: Artifact[];
   interventions: Intervention[];
 }) {
+  const { t } = useI18n();
   const runtimeEvents = activity.filter(isRuntimeEvent).slice(-6).reverse();
   const runtimeWorkItems = workItems.filter(isRuntimeGenerated);
   const runtimeArtifacts = artifacts.filter(isRuntimeArtifact);
@@ -311,34 +328,34 @@ export function RuntimeTaskAuditPanel({
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Runtime Audit</h3>
+        <h3>{t("common.runtimeAudit")}</h3>
         <span className="muted">{runtimeEvents.length}</span>
       </div>
       <div className="stack">
         <div className="stats-grid">
           <article className="stat-card">
-            <span>Runtime Events</span>
+            <span>{t("common.runtimeEvents")}</span>
             <strong>{runtimeEvents.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Generated Items</span>
+            <span>{t("common.generatedItems")}</span>
             <strong>{runtimeWorkItems.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Runtime Artifacts</span>
+            <span>{t("common.runtimeArtifacts")}</span>
             <strong>{runtimeArtifacts.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Escalations</span>
+            <span>{t("common.escalations")}</span>
             <strong>{runtimeInterventions.length}</strong>
           </article>
         </div>
-        {runtimeEvents.length === 0 ? <p className="muted">No runtime actions recorded for this task yet.</p> : null}
+        {runtimeEvents.length === 0 ? <p className="muted">{t("common.noRuntimeActions")}</p> : null}
         {runtimeEvents.map((event) => (
           <article key={event.id} className="list-card runtime-audit-card">
             <div className="list-card-top">
               <strong>{event.topic}</strong>
-              <span className="pill runtime-pill">Runtime</span>
+              <span className="pill runtime-pill">{t("common.runtimeBadge")}</span>
             </div>
             <p>{summarizeRuntimeEvent(event)}</p>
             <div className="team-metrics">
@@ -368,6 +385,7 @@ export function SupervisorPanel({
   onChange: (updater: (current: SupervisorFormState) => SupervisorFormState) => void;
   onAction: (action: DetailAction, request?: DetailActionRequest) => void | Promise<void>;
 }) {
+  const { language, t } = useI18n();
   const [filter, setFilter] = useState("all");
   const recentInterventions = useMemo(
     () => [...interventions].sort((a, b) => b.created_at.localeCompare(a.created_at)),
@@ -389,33 +407,33 @@ export function SupervisorPanel({
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Supervisor</h3>
+        <h3>{t("taskDetail.supervisor")}</h3>
         <span className="muted">{filteredInterventions.length}</span>
       </div>
       <div className="stack">
         <article className={`list-card supervisor-summary ${task.state === "Blocked" ? "is-blocked" : ""}`}>
           <div className="list-card-top">
-            <strong>{task.state === "Blocked" ? "Task blocked" : "Task active"}</strong>
-            <span className="pill subtle">{task.state}</span>
+            <strong>{task.state === "Blocked" ? t("taskDetail.taskBlocked") : t("taskDetail.taskActive")}</strong>
+            <span className="pill subtle">{translateState(language, task.state)}</span>
           </div>
-          <p>{task.blocked_reason || "No active blocker recorded."}</p>
+          <p>{task.blocked_reason || t("taskDetail.noActiveBlocker")}</p>
           <div className="team-metrics">
-            <span>Owner: {task.owner_role}</span>
-            <span>Review round: {task.review_round}</span>
-            <span>Plan v{task.current_plan_version}</span>
+            <span>{t("common.owner")}: {translateRole(language, task.owner_role)}</span>
+            <span>{t("taskDetail.reviewRound")}: {task.review_round}</span>
+            <span>{t("taskDetail.plan")} v{task.current_plan_version}</span>
           </div>
           {Object.keys(actionCounts).length > 0 ? (
             <div className="chip-row">
               {Object.entries(actionCounts).map(([action, count]) => (
                 <span key={action} className="chip">
-                  {action}: {count}
+                  {translateSupervisorAction(language, action)}: {count}
                 </span>
               ))}
             </div>
           ) : null}
           {lastIntervention ? (
             <small>
-              Last intervention: {lastIntervention.action} by {lastIntervention.triggered_by_role} at{" "}
+              {t("taskDetail.lastIntervention")}: {translateSupervisorAction(language, lastIntervention.action)} by {translateRole(language, lastIntervention.triggered_by_role)} at{" "}
               {formatDate(lastIntervention.created_at)}
             </small>
           ) : null}
@@ -432,8 +450,8 @@ export function SupervisorPanel({
           }}
         >
           <div className="panel-header">
-            <h4>Intervene</h4>
-            <span className="muted">Policy-aware controls</span>
+            <h4>{t("taskDetail.intervene")}</h4>
+            <span className="muted">{t("common.policyAwareControls")}</span>
           </div>
           <div className="chip-row">
             {SUPERVISOR_ACTIONS.map((action) => (
@@ -441,7 +459,7 @@ export function SupervisorPanel({
                 key={action.value}
                 className={`chip action-chip ${action.available(task) ? "" : "is-disabled"}`}
               >
-                {action.label}
+                {translateSupervisorAction(language, action.value)}
               </span>
             ))}
           </div>
@@ -458,29 +476,29 @@ export function SupervisorPanel({
             >
               {SUPERVISOR_ACTIONS.map((action) => (
                 <option key={action.value} value={action.value}>
-                  {action.label}
+                  {translateSupervisorAction(language, action.value)}
                 </option>
               ))}
             </select>
             <input
               className="text-input"
-              placeholder="Actor ID"
+              placeholder={t("common.actorId")}
               value={value.actorId}
               onChange={(event) => onChange((current) => ({ ...current, actorId: event.target.value }))}
             />
           </div>
-          <p className="muted inline-banner">{selectedAction.helper}</p>
+          <p className="muted inline-banner">{language === "zh-CN" ? helperTextZh(selectedAction.value) : selectedAction.helper}</p>
           <textarea
             className="text-input textarea-input"
-            placeholder="Reason for intervention"
+            placeholder={t("taskDetail.reasonForIntervention")}
             value={value.reason}
             onChange={(event) => onChange((current) => ({ ...current, reason: event.target.value }))}
           />
           <button type="submit" disabled={!canSubmit}>
-            {runningAction === value.action ? "Running..." : `Run ${selectedAction.label}`}
+            {runningAction === value.action ? t("common.running") : `${t("common.runNow")} ${translateSupervisorAction(language, selectedAction.value)}`}
           </button>
           {availableActions.length === 0 ? (
-            <small>No supervisor actions are currently available for this task state.</small>
+            <small>{t("taskDetail.noSupervisorActions")}</small>
           ) : null}
         </form>
         {Object.keys(actionCounts).length > 0 ? (
@@ -490,30 +508,30 @@ export function SupervisorPanel({
               value={filter}
               onChange={(event) => setFilter(event.target.value)}
             >
-              <option value="all">All interventions</option>
+              <option value="all">{t("common.allInterventions")}</option>
               {Object.keys(actionCounts).map((action) => (
                 <option key={action} value={action}>
-                  {action}
+                  {translateSupervisorAction(language, action)}
                 </option>
               ))}
             </select>
           </div>
         ) : null}
-        {interventions.length === 0 ? <p className="muted">No interventions yet.</p> : null}
+        {interventions.length === 0 ? <p className="muted">{t("common.noInterventionsYet")}</p> : null}
         {filteredInterventions.map((item) => (
           <article key={item.id} className={`list-card intervention-card action-${item.action}`}>
             <div className="list-card-top">
               <div className="chip-row">
-                <strong>{item.action}</strong>
-                {isRuntimeIntervention(item) ? <span className="pill runtime-pill">Runtime</span> : null}
+                <strong>{translateSupervisorAction(language, item.action)}</strong>
+                {isRuntimeIntervention(item) ? <span className="pill runtime-pill">{t("common.runtimeBadge")}</span> : null}
               </div>
               <span className="muted">
-                {item.from_state} {" -> "} {item.to_state}
+                {translateState(language, item.from_state)} {" -> "} {translateState(language, item.to_state)}
               </span>
             </div>
-            <p>{item.reason || "No reason provided."}</p>
+            <p>{item.reason || t("taskDetail.noReasonProvided")}</p>
             <div className="team-metrics">
-              <span>{item.triggered_by_role}</span>
+              <span>{translateRole(language, item.triggered_by_role)}</span>
               <span>{item.triggered_by_id}</span>
             </div>
             <small>{formatDate(item.created_at)}</small>
@@ -566,14 +584,15 @@ function isRuntimeEvent(event: ActivityEvent) {
 }
 
 function summarizeRuntimeEvent(event: ActivityEvent) {
+  const lang = typeof document !== "undefined" && document.documentElement.lang === "en" ? "en" : "zh-CN";
   if (event.payload?.work_item_count) {
-    return `Affected work items: ${String(event.payload.work_item_count)}`;
+    return `${lang === "zh-CN" ? "影响的工作项" : "Affected work items"}: ${String(event.payload.work_item_count)}`;
   }
   if (event.payload?.artifact_id) {
-    return `Completed with artifact ${String(event.payload.artifact_id)}`;
+    return `${lang === "zh-CN" ? "已附带 Artifact 完成" : "Completed with artifact"} ${String(event.payload.artifact_id)}`;
   }
   if (event.payload?.work_item_id) {
-    return `Affected work item ${String(event.payload.work_item_id)}`;
+    return `${lang === "zh-CN" ? "影响的工作项" : "Affected work item"} ${String(event.payload.work_item_id)}`;
   }
   return summarizeText(event.topic, 100);
 }
@@ -581,4 +600,13 @@ function summarizeRuntimeEvent(event: ActivityEvent) {
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (typeof value !== "object" || value === null) return null;
   return value as Record<string, unknown>;
+}
+
+function helperTextZh(action: SupervisorFormState["action"]) {
+  if (action === "pause") return "把活跃任务置为阻塞，并记录原因。";
+  if (action === "resume") return "根据上一次暂停上下文，把阻塞任务恢复到合适状态。";
+  if (action === "retry") return "在任务保持阻塞时记录一次重试。";
+  if (action === "escalate") return "记录一次升级，不直接改变任务状态。";
+  if (action === "rollback") return "把任务退回到规划或确认阶段，取决于当前历史。";
+  return "把任务退回到 Planned，重新进行一轮协调。";
 }

@@ -1,6 +1,7 @@
 import { ACTOR_ROLE_OPTIONS } from "../api/client";
 import type { ActorContext } from "../api/client";
 import { RuntimeStatusPanel } from "../components/control-plane-panels";
+import { translateRole, useI18n } from "../i18n";
 import type { RuntimeStatus } from "../types";
 
 type ActorRole = (typeof ACTOR_ROLE_OPTIONS)[number];
@@ -18,28 +19,23 @@ export function SettingsPage({
   onActorContextChange: (value: ActorContext | ((current: ActorContext) => ActorContext)) => void;
   onRunRuntimeControl: (action: "run-once" | "pause" | "resume") => void | Promise<void>;
 }) {
+  const { language, setLanguage, t } = useI18n();
   return (
     <div className="page-stack">
       <section className="panel hero-panel">
-        <p className="eyebrow">Configuration</p>
-        <h2>Settings</h2>
-        <p className="summary-copy">
-          Use this page to switch operator identity, inspect runtime behavior, and control the
-          orchestration loop without leaving the control plane.
-        </p>
+        <p className="eyebrow">{t("settings.eyebrow")}</p>
+        <h2>{t("nav.settings")}</h2>
+        <p className="summary-copy">{t("settings.summary")}</p>
       </section>
 
       <div className="detail-grid">
         <section className="panel">
           <div className="panel-header">
-            <h3>Actor Context</h3>
-            <span className="muted">{actorContext.role}</span>
+            <h3>{t("settings.actorContext")}</h3>
+            <span className="muted">{translateRole(language, actorContext.role)}</span>
           </div>
           <div className="stack">
-            <p className="muted">
-              All write actions use this identity through request headers, and the backend enforces
-              role-based permissions against it.
-            </p>
+            <p className="muted">{t("settings.actorContextHelp")}</p>
             <select
               className="text-input"
               value={actorContext.role}
@@ -52,13 +48,13 @@ export function SettingsPage({
             >
               {ACTOR_ROLE_OPTIONS.map((role) => (
                 <option key={role} value={role}>
-                  {role}
+                  {translateRole(language, role)}
                 </option>
               ))}
             </select>
             <input
               className="text-input"
-              placeholder="Actor ID"
+              placeholder={t("common.actorId")}
               value={actorContext.actorId}
               onChange={(event) =>
                 onActorContextChange((current) => ({
@@ -69,13 +65,21 @@ export function SettingsPage({
             />
             <article className="list-card">
               <div className="list-card-top">
-                <strong>Current Identity</strong>
-                <span className="pill subtle">{actorContext.actorId || "unset"}</span>
+                <strong>{t("settings.currentIdentity")}</strong>
+                <span className="pill subtle">{actorContext.actorId || t("common.unset")}</span>
               </div>
-              <p>
-                Switch roles here when you want to test planner, reviewer, delivery, supervisor, or
-                runtime control paths without editing code.
-              </p>
+              <p>{t("settings.identityHelp")}</p>
+            </article>
+            <article className="list-card">
+              <div className="list-card-top">
+                <strong>{t("settings.language")}</strong>
+                <span className="pill subtle">{language === "zh-CN" ? t("common.chinese") : t("common.english")}</span>
+              </div>
+              <p>{t("settings.languageHelp")}</p>
+              <select className="text-input" value={language} onChange={(event) => setLanguage(event.target.value as "zh-CN" | "en")}>
+                <option value="zh-CN">{t("common.chinese")}</option>
+                <option value="en">{t("common.english")}</option>
+              </select>
             </article>
           </div>
         </section>

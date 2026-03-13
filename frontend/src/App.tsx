@@ -6,11 +6,13 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { TaskDetailPage } from "./pages/TaskDetailPage";
 import { TeamsPage } from "./pages/TeamsPage";
 import { useControlPlane } from "./hooks/useControlPlane";
+import { useI18n } from "./i18n";
 
 function RoutedApp() {
   const navigate = useNavigate();
   const { taskId } = useParams();
   const controlPlane = useControlPlane(taskId, (nextTaskId) => navigate(`/tasks/${nextTaskId}`));
+  const { t } = useI18n();
 
   return (
     <div className="app-shell">
@@ -34,28 +36,28 @@ function RoutedApp() {
         <header className="main-header">
           <div>
             <p className="eyebrow">companyagents</p>
-            <h2>{controlPlane.bundle?.task.title ?? "Workflow Dashboard"}</h2>
+            <h2>{controlPlane.bundle?.task.title ?? t("app.workflowDashboard")}</h2>
           </div>
           <div className="header-meta">
             <nav className="nav-row">
               <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
-                Board
+                {t("nav.board")}
               </NavLink>
               <NavLink to="/attention" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
-                Attention
+                {t("nav.attention")}
               </NavLink>
               <NavLink to="/teams" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
-                Teams
+                {t("nav.teams")}
               </NavLink>
               <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
-                Settings
+                {t("nav.settings")}
               </NavLink>
               {taskId ? (
                 <NavLink
                   to={`/tasks/${taskId}`}
                   className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                 >
-                  Task Detail
+                  {t("nav.taskDetail")}
                 </NavLink>
               ) : null}
             </nav>

@@ -119,6 +119,20 @@ Default frontend URL:
 http://SERVER_IP:4173
 ```
 
+## 7.1 Start Backend And Frontend With One Command
+
+If you want one command to start both services, run this from the parent directory:
+
+```bash
+./companyagents/start-dev.sh
+```
+
+This script will:
+
+- start backend and frontend together
+- write logs to `companyagents/.run/`
+- stop both processes when you press `Ctrl+C`
+
 ## 8. Seed Demo Data
 
 To quickly see a fuller workflow, seed demo data:

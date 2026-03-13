@@ -168,6 +168,7 @@ make -C companyagents frontend-dev
 make -C companyagents frontend-build
 make -C companyagents backend-test
 make -C companyagents seed-demo
+./companyagents/start-dev.sh
 ```
 
 ## Recommended Next Work

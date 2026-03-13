@@ -1,5 +1,6 @@
 import type { ActivityEvent, RuntimeStatus, Task } from "../types";
 import { formatDate, summarizeText } from "../utils";
+import { translatePriority, translateRole, translateState, useI18n } from "../i18n";
 
 export function TaskQueuePanel({
   title,
@@ -14,6 +15,7 @@ export function TaskQueuePanel({
   empty: string;
   onSelectTask: (taskId: string) => void;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
@@ -38,12 +40,20 @@ export function TaskQueuePanel({
           >
             <div className="list-card-top">
               <strong>{task.title}</strong>
-              <span className="pill subtle">{variant?.startsWith("priority-") ? task.priority : task.state}</span>
+              <span className="pill subtle">
+                {variant?.startsWith("priority-")
+                  ? translatePriority(language, task.priority)
+                  : translateState(language, task.state)}
+              </span>
             </div>
-            <p>{summarizeText(task.blocked_reason || task.acceptance_summary || task.summary || "No summary.", 150)}</p>
+            <p>{summarizeText(task.blocked_reason || task.acceptance_summary || task.summary || t("common.noSummary"), 150)}</p>
             <div className="team-metrics">
-              <span>{task.owner_role}</span>
-              {!variant?.startsWith("priority-") ? <span>{task.priority}</span> : <span>{task.state}</span>}
+              <span>{translateRole(language, task.owner_role)}</span>
+              {!variant?.startsWith("priority-") ? (
+                <span>{translatePriority(language, task.priority)}</span>
+              ) : (
+                <span>{translateState(language, task.state)}</span>
+              )}
               <span>{formatDate(task.updated_at)}</span>
             </div>
           </article>
@@ -64,6 +74,7 @@ export function ActivityPanel({
   empty: string;
   onSelectTask: (taskId: string) => void;
 }) {
+  const { language } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
@@ -92,7 +103,7 @@ export function ActivityPanel({
             <div>
               <strong>{event.topic}</strong>
               <p>
-                {event.actor_role}
+                {translateRole(language, event.actor_role)}
                 {event.task_id ? ` · ${event.task_id}` : ""}
               </p>
               <small>{formatDate(event.created_at)}</small>
@@ -119,6 +130,7 @@ export function CompactAttentionCard({
   fallback: string;
   onSelectTask: (taskId: string) => void;
 }) {
+  const { language } = useI18n();
   if (!task) return null;
 
   return (
@@ -128,7 +140,7 @@ export function CompactAttentionCard({
     >
       <div className="list-card-top">
         <span className="task-row-state">{label}</span>
-        <span className="pill subtle">{badge ?? task.priority}</span>
+        <span className="pill subtle">{badge ?? translatePriority(language, task.priority)}</span>
       </div>
       <strong>{task.title}</strong>
       <small>{summarizeText(task.blocked_reason || task.acceptance_summary || task.summary || fallback, 72)}</small>
@@ -149,57 +161,58 @@ export function RuntimeStatusPanel({
   onPause: () => void | Promise<void>;
   onResume: () => void | Promise<void>;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Runtime</h3>
-        <span className="muted">{runtime?.running ? "Active" : "Idle"}</span>
+        <h3>{t("common.runtime")}</h3>
+        <span className="muted">{runtime?.running ? t("common.active") : t("common.idle")}</span>
       </div>
-      {!runtime ? <p className="muted">Loading runtime status...</p> : null}
+      {!runtime ? <p className="muted">{t("common.loadingRuntimeStatus")}</p> : null}
       {runtime ? (
         <div className="stack">
           <article className={`list-card ${runtime.running ? "runtime-card-active" : ""}`}>
             <div className="list-card-top">
-              <strong>{runtime.configured_enabled ? "Worker enabled" : "Worker disabled"}</strong>
+              <strong>{runtime.configured_enabled ? t("common.workerEnabled") : t("common.workerDisabled")}</strong>
               <span className="pill subtle">{runtime.actor_id}</span>
             </div>
             <div className="team-metrics">
-              <span>Loop: {runtime.running ? "running" : "stopped"}</span>
-              <span>Poll: {runtime.poll_interval_seconds}s</span>
-              <span>Escalate after: {runtime.blocked_escalation_seconds}s</span>
-              <span>Last run: {runtime.last_run_at ? formatDate(runtime.last_run_at) : "Never"}</span>
+              <span>{t("common.loop")}: {runtime.running ? t("common.active") : t("common.idle")}</span>
+              <span>{t("common.poll")}: {runtime.poll_interval_seconds}s</span>
+              <span>{t("common.escalateAfter")}: {runtime.blocked_escalation_seconds}s</span>
+              <span>{t("common.lastRun")}: {runtime.last_run_at ? formatDate(runtime.last_run_at) : t("common.never")}</span>
             </div>
             <div className="action-row">
               <button type="button" disabled={busy} onClick={() => void onRunNow()}>
-                {busy ? "Working..." : "Run Now"}
+                {busy ? t("common.working") : t("common.runNow")}
               </button>
               <button type="button" className="ghost-button" disabled={busy || !runtime.enabled} onClick={() => void onPause()}>
-                Pause
+                {t("common.pause")}
               </button>
               <button type="button" className="ghost-button" disabled={busy || runtime.enabled} onClick={() => void onResume()}>
-                Resume
+                {t("common.resume")}
               </button>
             </div>
           </article>
           <div className="stats-grid">
             <article className="stat-card">
-              <span>Generated</span>
+              <span>{t("common.generated")}</span>
               <strong>{runtime.last_result.generated_work_items}</strong>
             </article>
             <article className="stat-card">
-              <span>Dispatched</span>
+              <span>{t("common.dispatched")}</span>
               <strong>{runtime.last_result.dispatched_tasks}</strong>
             </article>
             <article className="stat-card">
-              <span>Ready To Report</span>
+              <span>{t("common.readyToReport")}</span>
               <strong>{runtime.last_result.ready_to_report_tasks}</strong>
             </article>
             <article className="stat-card">
-              <span>Completed</span>
+              <span>{t("common.completed")}</span>
               <strong>{runtime.last_result.completed_tasks}</strong>
             </article>
             <article className="stat-card">
-              <span>Escalated</span>
+              <span>{t("common.escalated")}</span>
               <strong>{runtime.last_result.escalated_tasks}</strong>
             </article>
           </div>
@@ -216,16 +229,17 @@ export function RuntimeAuditPanel({
   activity: ActivityEvent[];
   onSelectTask: (taskId: string) => void;
 }) {
+  const { t } = useI18n();
   const runtimeEvents = activity.filter(isRuntimeEvent).slice(0, 6);
 
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Runtime Audit</h3>
+        <h3>{t("common.runtimeAudit")}</h3>
         <span className="muted">{runtimeEvents.length}</span>
       </div>
       <div className="stack">
-        {runtimeEvents.length === 0 ? <p className="muted">No runtime actions recorded yet.</p> : null}
+        {runtimeEvents.length === 0 ? <p className="muted">{t("common.noRuntimeActions")}</p> : null}
         {runtimeEvents.map((event) => (
           <article
             key={event.id}
@@ -244,7 +258,7 @@ export function RuntimeAuditPanel({
           >
             <div className="list-card-top">
               <strong>{event.topic}</strong>
-              <span className="pill runtime-pill">Runtime</span>
+              <span className="pill runtime-pill">{t("common.runtimeBadge")}</span>
             </div>
             <p>{summarizeRuntimeEvent(event)}</p>
             <div className="team-metrics">
@@ -271,14 +285,15 @@ function isRuntimeEvent(event: ActivityEvent) {
 }
 
 function summarizeRuntimeEvent(event: ActivityEvent) {
+  const language = typeof document !== "undefined" && document.documentElement.lang === "en" ? "en" : "zh-CN";
   if (event.payload?.work_item_count) {
-    return `Affected work items: ${String(event.payload.work_item_count)}`;
+    return `${resolveCommonLabel(language, "affectedWorkItems")}: ${String(event.payload.work_item_count)}`;
   }
   if (event.payload?.artifact_id) {
-    return `Completed with artifact ${String(event.payload.artifact_id)}`;
+    return `${resolveCommonLabel(language, "completedWithArtifact")} ${String(event.payload.artifact_id)}`;
   }
   if (event.payload?.work_item_id) {
-    return `Updated ${String(event.payload.work_item_id)}`;
+    return `${resolveCommonLabel(language, "affectedWorkItem")} ${String(event.payload.work_item_id)}`;
   }
   return summarizeText(event.topic, 100);
 }
@@ -286,4 +301,15 @@ function summarizeRuntimeEvent(event: ActivityEvent) {
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (typeof value !== "object" || value === null) return null;
   return value as Record<string, unknown>;
+}
+
+function resolveCommonLabel(language: "zh-CN" | "en", key: "affectedWorkItems" | "completedWithArtifact" | "affectedWorkItem") {
+  if (language === "en") {
+    if (key === "affectedWorkItems") return "Affected work items";
+    if (key === "completedWithArtifact") return "Completed with artifact";
+    return "Affected work item";
+  }
+  if (key === "affectedWorkItems") return "影响的工作项";
+  if (key === "completedWithArtifact") return "已附带 Artifact 完成";
+  return "影响的工作项";
 }

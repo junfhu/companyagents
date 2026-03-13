@@ -1,5 +1,6 @@
 import type { ActivityEvent, AttentionQueues, Task } from "../types";
 import { ActivityPanel, TaskQueuePanel } from "../components/control-plane-panels";
+import { useI18n } from "../i18n";
 
 export function AttentionPage({
   attention,
@@ -10,6 +11,7 @@ export function AttentionPage({
   recentActivity: ActivityEvent[];
   onSelectTask: (taskId: string) => void;
 }) {
+  const { t } = useI18n();
   const queues = attention ?? {
     recent: [],
     blocked: [],
@@ -21,31 +23,28 @@ export function AttentionPage({
   return (
     <div className="page-stack">
       <section className="panel hero-panel">
-        <p className="eyebrow">Operations</p>
-        <h2>Attention</h2>
-        <p className="summary-copy">
-          This page isolates the queues that usually need human attention first: blocked work,
-          review backlog, priority items, and the most recently changing tasks.
-        </p>
+        <p className="eyebrow">{t("attention.eyebrow")}</p>
+        <h2>{t("nav.attention")}</h2>
+        <p className="summary-copy">{t("attention.summary")}</p>
         <div className="stats-grid wide">
           <article className="stat-card">
-            <span>Blocked</span>
+            <span>{t("attention.blocked")}</span>
             <strong>{queues.blocked.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Stalled</span>
+            <span>{t("attention.stalled")}</span>
             <strong>{queues.stalled.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Needs Review</span>
+            <span>{t("attention.needsReview")}</span>
             <strong>{queues.review.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Priority</span>
+            <span>{t("attention.priority")}</span>
             <strong>{queues.priority.length}</strong>
           </article>
           <article className="stat-card">
-            <span>Recently Active</span>
+            <span>{t("attention.recentlyActive")}</span>
             <strong>{queues.recent.length}</strong>
           </article>
         </div>
@@ -53,43 +52,43 @@ export function AttentionPage({
 
       <div className="detail-grid">
         <TaskQueuePanel
-          title="Blocked Queue"
+          title={t("attention.blockedQueue")}
           tasks={queues.blocked}
           variant="board-blocked"
-          empty="No blocked tasks right now."
+          empty={t("board.noBlockedTasks")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Stalled Blockers"
+          title={t("attention.stalledBlockers")}
           tasks={queues.stalled}
           variant="queue-stalled"
-          empty="No stale blocked tasks right now."
+          empty={t("attention.noStalled")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Review Queue"
+          title={t("attention.reviewQueue")}
           tasks={queues.review}
           variant="board-review"
-          empty="No review work waiting."
+          empty={t("attention.noReviewWork")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Priority Queue"
+          title={t("attention.priorityQueue")}
           tasks={queues.priority}
           variant="priority-high"
-          empty="No high-priority tasks queued."
+          empty={t("attention.noPriorityWork")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Recent Changes"
+          title={t("attention.recentChanges")}
           tasks={queues.recent}
-          empty="No recent task activity."
+          empty={t("attention.noRecentTaskActivity")}
           onSelectTask={onSelectTask}
         />
         <ActivityPanel
-          title="System Activity"
+          title={t("common.systemActivity")}
           activity={recentActivity}
-          empty="No recent system activity yet."
+          empty={t("common.noRecentSystemActivity")}
           onSelectTask={onSelectTask}
         />
       </div>

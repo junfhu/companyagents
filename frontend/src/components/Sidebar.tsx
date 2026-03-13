@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import type { ActorContext } from "../api/client";
 import { ACTOR_ROLE_OPTIONS } from "../api/client";
 import { CompactAttentionCard } from "./control-plane-panels";
+import { useI18n, translatePriority, translateRole, translateState } from "../i18n";
 import type { AttentionQueues, DashboardSummary, Task } from "../types";
 import { formatDate, statRows, summarizeText } from "../utils";
 
@@ -45,6 +46,7 @@ export function Sidebar({
   onActorContextChange,
   onCreateTask,
 }: SidebarProps) {
+  const { language, t } = useI18n();
   const attentionSource = attention ?? summary?.attention ?? null;
   const sortedTasks = [...tasks].sort((left, right) => {
     const priorityScore = (value: string) => {
@@ -70,13 +72,13 @@ export function Sidebar({
     <aside className="sidebar">
       <div className="brand">
         <p className="eyebrow">AI Delivery Operating System</p>
-        <h1>Control Plane</h1>
+        <h1>{t("sidebar.controlPlane")}</h1>
       </div>
 
       <section className="panel">
         <div className="panel-header">
-          <h2>Operator</h2>
-          <span className="muted">{actorContext.role}</span>
+          <h2>{t("sidebar.operator")}</h2>
+          <span className="muted">{translateRole(language, actorContext.role)}</span>
         </div>
         <div className="stack">
           <select
@@ -91,13 +93,13 @@ export function Sidebar({
           >
             {ACTOR_ROLE_OPTIONS.map((role) => (
               <option key={role} value={role}>
-                {role}
+                {translateRole(language, role)}
               </option>
             ))}
           </select>
           <input
             className="text-input"
-            placeholder="Actor ID"
+            placeholder={t("common.actorId")}
             value={actorContext.actorId}
             onChange={(event) =>
               onActorContextChange((current) => ({
@@ -106,19 +108,19 @@ export function Sidebar({
               }))
             }
           />
-          <small>Write actions use these headers, and the backend now enforces role-based permissions.</small>
+          <small>{t("sidebar.writeActionHint")}</small>
         </div>
       </section>
 
       <section className="panel">
         <div className="panel-header">
-          <h2>Summary</h2>
+          <h2>{t("sidebar.summary")}</h2>
           <button className="ghost-button" onClick={() => void onRefresh()}>
-            Refresh
+            {t("common.refresh")}
           </button>
         </div>
         <div className="stats-grid">
-          {statRows(summary).map((item) => (
+          {statRows(summary, language).map((item) => (
             <article key={item.label} className="stat-card">
               <span>{item.label}</span>
               <strong>{item.value}</strong>
@@ -129,13 +131,13 @@ export function Sidebar({
 
       <section className="panel">
         <div className="panel-header">
-          <h2>New Task</h2>
-          <span className="muted">Intake</span>
+          <h2>{t("sidebar.newTask")}</h2>
+          <span className="muted">{t("sidebar.intake")}</span>
         </div>
         <form className="stack" onSubmit={onCreateTask}>
           <input
             className="text-input"
-            placeholder="Task title"
+            placeholder={t("sidebar.taskTitle")}
             value={taskForm.title}
             onChange={(event) =>
               onTaskFormChange((current) => ({ ...current, title: event.target.value }))
@@ -143,7 +145,7 @@ export function Sidebar({
           />
           <textarea
             className="text-input textarea-input"
-            placeholder="Task summary"
+            placeholder={t("sidebar.taskSummary")}
             value={taskForm.summary}
             onChange={(event) =>
               onTaskFormChange((current) => ({ ...current, summary: event.target.value }))
@@ -152,7 +154,7 @@ export function Sidebar({
           <div className="form-grid">
             <input
               className="text-input"
-              placeholder="Requester"
+              placeholder={t("sidebar.requester")}
               value={taskForm.requester}
               onChange={(event) =>
                 onTaskFormChange((current) => ({ ...current, requester: event.target.value }))
@@ -164,30 +166,30 @@ export function Sidebar({
               onChange={(event) =>
                 onTaskFormChange((current) => ({ ...current, priority: event.target.value }))
               }
-            >
-              <option value="low">low</option>
-              <option value="normal">normal</option>
-              <option value="high">high</option>
-              <option value="critical">critical</option>
+              >
+              <option value="low">{translatePriority(language, "low")}</option>
+              <option value="normal">{translatePriority(language, "normal")}</option>
+              <option value="high">{translatePriority(language, "high")}</option>
+              <option value="critical">{translatePriority(language, "critical")}</option>
             </select>
           </div>
           <input
             className="text-input"
-            placeholder="Tags, comma separated"
+            placeholder={t("sidebar.tags")}
             value={taskForm.tags}
             onChange={(event) =>
               onTaskFormChange((current) => ({ ...current, tags: event.target.value }))
             }
           />
           <button type="submit" disabled={creatingTask}>
-            {creatingTask ? "Creating..." : "Create Task"}
+            {creatingTask ? t("sidebar.creatingTask") : t("sidebar.createTask")}
           </button>
         </form>
       </section>
 
       <section className="panel">
         <div className="panel-header">
-          <h2>Attention</h2>
+          <h2>{t("sidebar.attention")}</h2>
           <span className="muted">
             {(attentionSource?.blocked.length ?? 0) +
               (attentionSource?.review.length ?? 0) +
@@ -196,39 +198,39 @@ export function Sidebar({
         </div>
         <div className="stack">
           <CompactAttentionCard
-            label="Blocked"
+            label={t("attention.blocked")}
             task={attentionSource?.blocked[0]}
             variant="task-row-blocked"
-            fallback="Needs unblock action."
+            fallback={t("sidebar.blockedFallback")}
             onSelectTask={onSelectTask}
           />
           <CompactAttentionCard
-            label="Needs Review"
+            label={t("attention.needsReview")}
             task={attentionSource?.review[0]}
             variant="task-row-review"
-            badge={attentionSource?.review[0] ? `Round ${attentionSource.review[0].review_round || 0}` : undefined}
-            fallback="Review queue item."
+            badge={attentionSource?.review[0] ? `${t("taskDetail.reviewRound")} ${attentionSource.review[0].review_round || 0}` : undefined}
+            fallback={t("sidebar.reviewFallback")}
             onSelectTask={onSelectTask}
           />
           <CompactAttentionCard
-            label="Priority"
+            label={t("attention.priority")}
             task={attentionSource?.priority[0]}
             variant="task-row-critical"
-            fallback="High-priority task."
+            fallback={t("sidebar.priorityFallback")}
             onSelectTask={onSelectTask}
           />
-          {!attentionSource ? <p className="muted">Loading attention queues...</p> : null}
+          {!attentionSource ? <p className="muted">{t("sidebar.loadingAttention")}</p> : null}
         </div>
       </section>
 
       <section className="panel">
         <div className="panel-header">
-          <h2>Tasks</h2>
+          <h2>{t("sidebar.tasks")}</h2>
           <span className="muted">{tasks.length}</span>
         </div>
         <div className="task-list">
-          {loading ? <p className="muted">Loading tasks...</p> : null}
-          {!loading && tasks.length === 0 ? <p className="muted">No tasks yet.</p> : null}
+          {loading ? <p className="muted">{t("sidebar.loadingTasks")}</p> : null}
+          {!loading && tasks.length === 0 ? <p className="muted">{t("sidebar.noTasks")}</p> : null}
           {sortedTasks.map((task) => (
             <button
               key={task.id}
@@ -240,16 +242,16 @@ export function Sidebar({
               onClick={() => onSelectTask(task.id)}
             >
               <div className="list-card-top">
-                <span className="task-row-state">{task.state}</span>
-                <span className="pill subtle">{task.priority}</span>
+                <span className="task-row-state">{translateState(language, task.state)}</span>
+                <span className="pill subtle">{translatePriority(language, task.priority)}</span>
               </div>
               <strong>{task.title}</strong>
-              <small>{summarizeText(task.summary || "No summary.", 84)}</small>
+              <small>{summarizeText(task.summary || t("common.noSummary"), 84)}</small>
               <div className="task-row-meta">
-                <span>{task.owner_role}</span>
+                <span>{translateRole(language, task.owner_role)}</span>
                 <span>{formatDate(task.updated_at)}</span>
               </div>
-              {task.blocked_reason ? <small>Blocker: {summarizeText(task.blocked_reason, 72)}</small> : null}
+              {task.blocked_reason ? <small>{t("common.blocker")}: {summarizeText(task.blocked_reason, 72)}</small> : null}
             </button>
           ))}
         </div>

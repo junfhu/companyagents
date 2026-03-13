@@ -24,6 +24,7 @@ import type {
   SupervisorFormState,
   WorkItemFormState,
 } from "../hooks/useControlPlane";
+import { useI18n } from "../i18n";
 
 export function TaskDetailPage({
   bundle,
@@ -76,11 +77,12 @@ export function TaskDetailPage({
   onUpdateWorkItemProgress: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
   onCreateArtifact: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
 }) {
+  const { t } = useI18n();
   if (!bundle) {
     return (
       <section className="empty-state panel">
-        <h3>No task selected</h3>
-        <p>Choose a task from the sidebar to inspect its plan, execution, and outputs.</p>
+        <h3>{t("taskDetail.noTaskSelected")}</h3>
+        <p>{t("taskDetail.noTaskSelectedCopy")}</p>
       </section>
     );
   }

@@ -1,4 +1,11 @@
 import type { WorkItem } from "../../types";
+import {
+  translateArtifactType,
+  translatePriority,
+  translateRole,
+  translateWorkItemStatus,
+  useI18n,
+} from "../../i18n";
 import type {
   ArtifactFormState,
   PlanFormState,
@@ -20,22 +27,23 @@ export function PlanFormPanel({
   onChange: (updater: (current: PlanFormState) => PlanFormState) => void;
   onSubmit: SubmitHandler;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Create Plan</h3>
+        <h3>{t("taskDetail.createPlan")}</h3>
         <span className="muted">PM</span>
       </div>
       <form className="stack" onSubmit={onSubmit}>
         <textarea
           className="text-input textarea-input"
-          placeholder="Goal"
+          placeholder={t("taskDetail.goal")}
           value={value.goal}
           onChange={(event) => onChange((current) => ({ ...current, goal: event.target.value }))}
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Acceptance criteria, one per line"
+          placeholder={t("taskDetail.acceptanceCriteriaLine")}
           value={value.acceptance}
           onChange={(event) =>
             onChange((current) => ({ ...current, acceptance: event.target.value }))
@@ -43,20 +51,20 @@ export function PlanFormPanel({
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Scope items, one per line"
+          placeholder={t("taskDetail.scopeItemsLine")}
           value={value.scope}
           onChange={(event) => onChange((current) => ({ ...current, scope: event.target.value }))}
         />
         <div className="form-grid">
           <input
             className="text-input"
-            placeholder="Teams, comma separated"
+            placeholder={t("taskDetail.teamsCommaSeparated")}
             value={value.teams}
             onChange={(event) => onChange((current) => ({ ...current, teams: event.target.value }))}
           />
           <input
             className="text-input"
-            placeholder="Estimated effort"
+            placeholder={t("taskDetail.estimatedEffort")}
             value={value.estimatedEffort}
             onChange={(event) =>
               onChange((current) => ({ ...current, estimatedEffort: event.target.value }))
@@ -65,18 +73,18 @@ export function PlanFormPanel({
         </div>
         <textarea
           className="text-input textarea-input"
-          placeholder="Risks, one per line"
+          placeholder={t("taskDetail.risksLine")}
           value={value.risks}
           onChange={(event) => onChange((current) => ({ ...current, risks: event.target.value }))}
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Notes"
+          placeholder={t("taskDetail.notes")}
           value={value.notes}
           onChange={(event) => onChange((current) => ({ ...current, notes: event.target.value }))}
         />
         <button type="submit" disabled={creating || !hasTask}>
-          {creating ? "Submitting..." : "Create Plan + Submit Review"}
+          {creating ? t("taskDetail.submitting") : t("taskDetail.createPlanSubmitReview")}
         </button>
       </form>
     </section>
@@ -96,22 +104,23 @@ export function WorkItemFormPanel({
   onChange: (updater: (current: WorkItemFormState) => WorkItemFormState) => void;
   onSubmit: SubmitHandler;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Create Work Item</h3>
-        <span className="muted">Delivery</span>
+        <h3>{t("taskDetail.createWorkItem")}</h3>
+        <span className="muted">{translateRole(language, "DeliveryManager")}</span>
       </div>
       <form className="stack" onSubmit={onSubmit}>
         <input
           className="text-input"
-          placeholder="Work item title"
+          placeholder={t("taskDetail.workItemTitle")}
           value={value.title}
           onChange={(event) => onChange((current) => ({ ...current, title: event.target.value }))}
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Description"
+          placeholder={t("taskDetail.description")}
           value={value.description}
           onChange={(event) =>
             onChange((current) => ({ ...current, description: event.target.value }))
@@ -125,11 +134,11 @@ export function WorkItemFormPanel({
               onChange((current) => ({ ...current, assignedTeam: event.target.value }))
             }
           >
-            <option value="Engineering">Engineering</option>
-            <option value="Data">Data</option>
-            <option value="Content">Content</option>
-            <option value="Operations">Operations</option>
-            <option value="Security">Security</option>
+            <option value="Engineering">{translateRole(language, "Engineering")}</option>
+            <option value="Data">{translateRole(language, "Data")}</option>
+            <option value="Content">{translateRole(language, "Content")}</option>
+            <option value="Operations">{translateRole(language, "Operations")}</option>
+            <option value="Security">{translateRole(language, "Security")}</option>
           </select>
           <select
             className="text-input"
@@ -138,22 +147,22 @@ export function WorkItemFormPanel({
               onChange((current) => ({ ...current, priority: event.target.value }))
             }
           >
-            <option value="low">low</option>
-            <option value="normal">normal</option>
-            <option value="high">high</option>
-            <option value="critical">critical</option>
+            <option value="low">{translatePriority(language, "low")}</option>
+            <option value="normal">{translatePriority(language, "normal")}</option>
+            <option value="high">{translatePriority(language, "high")}</option>
+            <option value="critical">{translatePriority(language, "critical")}</option>
           </select>
         </div>
         <textarea
           className="text-input textarea-input"
-          placeholder="Acceptance criteria, one per line"
+          placeholder={t("taskDetail.acceptanceCriteriaLine")}
           value={value.acceptance}
           onChange={(event) =>
             onChange((current) => ({ ...current, acceptance: event.target.value }))
           }
         />
         <button type="submit" disabled={creating || !hasPlan}>
-          {creating ? "Creating..." : "Create Work Item"}
+          {creating ? t("taskDetail.creating") : t("taskDetail.createWorkItem")}
         </button>
       </form>
     </section>
@@ -173,11 +182,12 @@ export function WorkItemProgressPanel({
   onChange: (updater: (current: ProgressFormState) => ProgressFormState) => void;
   onSubmit: SubmitHandler;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Update Progress</h3>
-        <span className="muted">Execution</span>
+        <h3>{t("taskDetail.updateProgress")}</h3>
+        <span className="muted">{t("taskDetail.execution")}</span>
       </div>
       <form className="stack" onSubmit={onSubmit}>
         <select
@@ -187,10 +197,10 @@ export function WorkItemProgressPanel({
             onChange((current) => ({ ...current, workItemId: event.target.value }))
           }
         >
-          <option value="">Select work item</option>
+          <option value="">{t("taskDetail.selectWorkItem")}</option>
           {workItems.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.title} ({item.status})
+              {item.title} ({translateWorkItemStatus(language, item.status)})
             </option>
           ))}
         </select>
@@ -200,10 +210,10 @@ export function WorkItemProgressPanel({
             value={value.status}
             onChange={(event) => onChange((current) => ({ ...current, status: event.target.value }))}
           >
-            <option value="Assigned">Assigned</option>
-            <option value="InProgress">InProgress</option>
-            <option value="Blocked">Blocked</option>
-            <option value="Completed">Completed</option>
+            <option value="Assigned">{translateWorkItemStatus(language, "Assigned")}</option>
+            <option value="InProgress">{translateWorkItemStatus(language, "InProgress")}</option>
+            <option value="Blocked">{translateWorkItemStatus(language, "Blocked")}</option>
+            <option value="Completed">{translateWorkItemStatus(language, "Completed")}</option>
           </select>
           <select
             className="text-input"
@@ -212,16 +222,16 @@ export function WorkItemProgressPanel({
               onChange((current) => ({ ...current, actorRole: event.target.value }))
             }
           >
-            <option value="EngineeringTeam">EngineeringTeam</option>
-            <option value="DataTeam">DataTeam</option>
-            <option value="ContentTeam">ContentTeam</option>
-            <option value="OperationsTeam">OperationsTeam</option>
-            <option value="SecurityTeam">SecurityTeam</option>
+            <option value="EngineeringTeam">{translateRole(language, "EngineeringTeam")}</option>
+            <option value="DataTeam">{translateRole(language, "DataTeam")}</option>
+            <option value="ContentTeam">{translateRole(language, "ContentTeam")}</option>
+            <option value="OperationsTeam">{translateRole(language, "OperationsTeam")}</option>
+            <option value="SecurityTeam">{translateRole(language, "SecurityTeam")}</option>
           </select>
         </div>
         <input
           className="text-input"
-          placeholder="Progress percent"
+          placeholder={t("taskDetail.progressPercent")}
           value={value.progressPercent}
           onChange={(event) =>
             onChange((current) => ({ ...current, progressPercent: event.target.value }))
@@ -229,20 +239,20 @@ export function WorkItemProgressPanel({
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Progress summary"
+          placeholder={t("taskDetail.progressSummary")}
           value={value.summary}
           onChange={(event) => onChange((current) => ({ ...current, summary: event.target.value }))}
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Block reason"
+          placeholder={t("taskDetail.blockReason")}
           value={value.blockReason}
           onChange={(event) =>
             onChange((current) => ({ ...current, blockReason: event.target.value }))
           }
         />
         <button type="submit" disabled={updating || workItems.length === 0}>
-          {updating ? "Updating..." : "Update Work Item"}
+          {updating ? t("taskDetail.updating") : t("taskDetail.updateProgress")}
         </button>
       </form>
     </section>
@@ -262,11 +272,12 @@ export function ArtifactFormPanel({
   onChange: (updater: (current: ArtifactFormState) => ArtifactFormState) => void;
   onSubmit: SubmitHandler;
 }) {
+  const { language, t } = useI18n();
   return (
     <section className="panel">
       <div className="panel-header">
-        <h3>Create Artifact</h3>
-        <span className="muted">Delivery Output</span>
+        <h3>{t("taskDetail.createArtifact")}</h3>
+        <span className="muted">{t("taskDetail.deliveryOutput")}</span>
       </div>
       <form className="stack" onSubmit={onSubmit}>
         <div className="form-grid">
@@ -277,7 +288,7 @@ export function ArtifactFormPanel({
               onChange((current) => ({ ...current, workItemId: event.target.value }))
             }
           >
-            <option value="">Attach to task only</option>
+            <option value="">{t("taskDetail.attachToTaskOnly")}</option>
             {workItems.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.title}
@@ -289,35 +300,35 @@ export function ArtifactFormPanel({
             value={value.type}
             onChange={(event) => onChange((current) => ({ ...current, type: event.target.value }))}
           >
-            <option value="document">document</option>
-            <option value="report">report</option>
-            <option value="repo_diff">repo_diff</option>
-            <option value="test_report">test_report</option>
-            <option value="design">design</option>
-            <option value="dataset">dataset</option>
-            <option value="chart">chart</option>
-            <option value="plan">plan</option>
-            <option value="summary">summary</option>
-            <option value="customer_response">customer_response</option>
-            <option value="runbook">runbook</option>
-            <option value="other">other</option>
+            <option value="document">{translateArtifactType(language, "document")}</option>
+            <option value="report">{translateArtifactType(language, "report")}</option>
+            <option value="repo_diff">{translateArtifactType(language, "repo_diff")}</option>
+            <option value="test_report">{translateArtifactType(language, "test_report")}</option>
+            <option value="design">{translateArtifactType(language, "design")}</option>
+            <option value="dataset">{translateArtifactType(language, "dataset")}</option>
+            <option value="chart">{translateArtifactType(language, "chart")}</option>
+            <option value="plan">{translateArtifactType(language, "plan")}</option>
+            <option value="summary">{translateArtifactType(language, "summary")}</option>
+            <option value="customer_response">{translateArtifactType(language, "customer_response")}</option>
+            <option value="runbook">{translateArtifactType(language, "runbook")}</option>
+            <option value="other">{translateArtifactType(language, "other")}</option>
           </select>
         </div>
         <input
           className="text-input"
-          placeholder="Artifact name"
+          placeholder={t("taskDetail.artifactName")}
           value={value.name}
           onChange={(event) => onChange((current) => ({ ...current, name: event.target.value }))}
         />
         <input
           className="text-input"
-          placeholder="Path or URL"
+          placeholder={t("taskDetail.pathOrUrl")}
           value={value.path}
           onChange={(event) => onChange((current) => ({ ...current, path: event.target.value }))}
         />
         <textarea
           className="text-input textarea-input"
-          placeholder="Artifact summary"
+          placeholder={t("taskDetail.artifactSummary")}
           value={value.summary}
           onChange={(event) => onChange((current) => ({ ...current, summary: event.target.value }))}
         />
@@ -328,16 +339,16 @@ export function ArtifactFormPanel({
             onChange((current) => ({ ...current, createdByRole: event.target.value }))
           }
         >
-          <option value="EngineeringTeam">EngineeringTeam</option>
-          <option value="DataTeam">DataTeam</option>
-          <option value="ContentTeam">ContentTeam</option>
-          <option value="OperationsTeam">OperationsTeam</option>
-          <option value="SecurityTeam">SecurityTeam</option>
-          <option value="DeliveryManager">DeliveryManager</option>
-          <option value="ReportingSpecialist">ReportingSpecialist</option>
+          <option value="EngineeringTeam">{translateRole(language, "EngineeringTeam")}</option>
+          <option value="DataTeam">{translateRole(language, "DataTeam")}</option>
+          <option value="ContentTeam">{translateRole(language, "ContentTeam")}</option>
+          <option value="OperationsTeam">{translateRole(language, "OperationsTeam")}</option>
+          <option value="SecurityTeam">{translateRole(language, "SecurityTeam")}</option>
+          <option value="DeliveryManager">{translateRole(language, "DeliveryManager")}</option>
+          <option value="ReportingSpecialist">{translateRole(language, "ReportingSpecialist")}</option>
         </select>
         <button type="submit" disabled={creating}>
-          {creating ? "Creating..." : "Create Artifact"}
+          {creating ? t("taskDetail.creating") : t("taskDetail.createArtifact")}
         </button>
       </form>
     </section>

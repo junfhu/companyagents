@@ -1,5 +1,6 @@
 import type { ActivityEvent, AttentionQueues, DashboardSummary, RuntimeStatus, Task } from "../types";
 import { ActivityPanel, RuntimeAuditPanel, RuntimeStatusPanel, TaskQueuePanel } from "../components/control-plane-panels";
+import { useI18n } from "../i18n";
 
 export function BoardPage({
   summary,
@@ -20,6 +21,7 @@ export function BoardPage({
   onRunRuntimeControl: (action: "run-once" | "pause" | "resume") => void | Promise<void>;
   onSelectTask: (taskId: string) => void;
 }) {
+  const { t } = useI18n();
   const sortedTasks = [...tasks].sort((left, right) => right.updated_at.localeCompare(left.updated_at));
   const activeTasks = attention?.recent ?? summary?.attention?.recent ?? sortedTasks.filter((task) => !task.archived).slice(0, 5);
   const blockedTasks = attention?.blocked ?? summary?.attention?.blocked ?? sortedTasks.filter((task) => task.state === "Blocked").slice(0, 5);
@@ -35,36 +37,34 @@ export function BoardPage({
   return (
     <div className="page-stack">
       <section className="panel hero-panel">
-        <p className="eyebrow">Workflow Overview</p>
-        <h2>Board</h2>
+        <p className="eyebrow">{t("board.eyebrow")}</p>
+        <h2>{t("nav.board")}</h2>
         <p className="summary-copy">
-          This page is the control-room overview for the modern delivery system. Use the sidebar to
-          create new requests and jump into task detail. The cards below highlight what needs
-          attention right now.
+          {t("board.summary")}
         </p>
         <div className="stats-grid wide">
           <article className="stat-card">
-            <span>Tasks Total</span>
+            <span>{t("board.tasksTotal")}</span>
             <strong>{summary?.tasks_total ?? 0}</strong>
           </article>
           <article className="stat-card">
-            <span>Active</span>
+            <span>{t("board.active")}</span>
             <strong>{summary?.tasks_active ?? 0}</strong>
           </article>
           <article className="stat-card">
-            <span>Blocked</span>
+            <span>{t("board.blocked")}</span>
             <strong>{summary?.tasks_blocked ?? 0}</strong>
           </article>
           <article className="stat-card">
-            <span>Teams Active</span>
+            <span>{t("board.teamsActive")}</span>
             <strong>{Object.keys(summary?.by_team ?? {}).length}</strong>
           </article>
           <article className="stat-card">
-            <span>Review Queue</span>
+            <span>{t("board.reviewQueue")}</span>
             <strong>{reviewQueue.length}</strong>
           </article>
           <article className="stat-card">
-            <span>High Priority</span>
+            <span>{t("board.highPriority")}</span>
             <strong>{criticalQueue.length}</strong>
           </article>
         </div>
@@ -72,30 +72,30 @@ export function BoardPage({
 
       <div className="detail-grid">
         <TaskQueuePanel
-          title="Recently Active"
+          title={t("board.recentlyActive")}
           tasks={activeTasks}
-          empty="No active tasks yet."
+          empty={t("board.noActiveTasks")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Blocked Now"
+          title={t("board.blockedNow")}
           tasks={blockedTasks}
           variant="board-blocked"
-          empty="No blocked tasks right now."
+          empty={t("board.noBlockedTasks")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Needs Review"
+          title={t("board.needsReview")}
           tasks={reviewQueue}
           variant="board-review"
-          empty="No review queue right now."
+          empty={t("board.noReviewQueue")}
           onSelectTask={onSelectTask}
         />
         <TaskQueuePanel
-          title="Priority Radar"
+          title={t("board.priorityRadar")}
           tasks={criticalQueue}
           variant="priority-high"
-          empty="No high-priority tasks right now."
+          empty={t("board.noPriorityTasks")}
           onSelectTask={onSelectTask}
         />
         <RuntimeStatusPanel
@@ -107,9 +107,9 @@ export function BoardPage({
         />
         <RuntimeAuditPanel activity={recentActivity} onSelectTask={onSelectTask} />
         <ActivityPanel
-          title="Recent Activity"
+          title={t("common.recentActivity")}
           activity={recentActivity}
-          empty="No recent system activity yet."
+          empty={t("common.noRecentSystemActivity")}
           onSelectTask={onSelectTask}
         />
       </div>

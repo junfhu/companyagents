@@ -119,6 +119,20 @@ make -C companyagents frontend-dev
 http://服务器IP:4173
 ```
 
+## 7.1 一条命令同时启动前后端
+
+如果你想用一条命令同时拉起前后端，可以在上级目录执行：
+
+```bash
+./companyagents/start-dev.sh
+```
+
+这个脚本会：
+
+- 同时启动后端和前端
+- 自动把日志写到 `companyagents/.run/`
+- 按 `Ctrl+C` 时一起停止两个进程
+
 ## 8. 导入演示数据
 
 如果你想快速看到更完整的页面效果，可以导入 demo 数据：

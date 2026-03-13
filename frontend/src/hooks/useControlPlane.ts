@@ -24,6 +24,7 @@ import {
 import { updateWorkItemProgress } from "../api/workItemProgress";
 import { createWorkItems } from "../api/workItems";
 import { openGlobalSocket, openTaskSocket } from "../api/ws";
+import { useI18n } from "../i18n";
 import type {
   ActivityEvent,
   AttentionQueues,
@@ -83,6 +84,7 @@ export type ArtifactFormState = {
 };
 
 export function useControlPlane(taskId: string | undefined, navigateToTask: (taskId: string) => void) {
+  const { language } = useI18n();
   const [actorContext, setActorContext] = useState(getActorContext());
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [runtime, setRuntime] = useState<RuntimeStatus | null>(null);
@@ -186,7 +188,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         setTeamWorkItems([]);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load dashboard");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "加载看板失败" : "Failed to load dashboard");
     } finally {
       if (!options?.silent) {
         setLoading(false);
@@ -206,7 +208,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
       const workload = await fetchTeamWorkItems(teamName);
       setTeamWorkItems(workload.items);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load team work items");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "加载团队工作项失败" : "Failed to load team work items");
     } finally {
       setTeamsLoading(false);
     }
@@ -224,7 +226,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
       const data = await fetchTaskBundle(currentTaskId);
       setBundle(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load task detail");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "加载任务详情失败" : "Failed to load task detail");
     } finally {
       if (!options?.silent) {
         setDetailLoading(false);
@@ -246,17 +248,23 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
       setRuntime(nextRuntime);
       setNotice(
         action === "run-once"
-          ? "Runtime worker executed one orchestration cycle"
+          ? language === "zh-CN"
+            ? "Runtime worker 已执行一轮 orchestration"
+            : "Runtime worker executed one orchestration cycle"
           : action === "pause"
-            ? "Runtime worker paused"
-            : "Runtime worker resumed",
+            ? language === "zh-CN"
+              ? "Runtime worker 已暂停"
+              : "Runtime worker paused"
+            : language === "zh-CN"
+              ? "Runtime worker 已恢复"
+              : "Runtime worker resumed",
       );
       await loadOverview({ silent: true });
       if (taskId) {
         await loadBundle(taskId, { silent: true });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to control runtime worker");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "控制 runtime worker 失败" : "Failed to control runtime worker");
     } finally {
       setRuntimeBusy(false);
     }
@@ -274,13 +282,17 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
           : await sweepTaskRuntime(bundle.task.id);
       setNotice(
         action === "run-once"
-          ? `Ran runtime orchestration for ${result.task_id}`
-          : `Ran supervisor sweep for ${result.task_id}`,
+          ? language === "zh-CN"
+            ? `已对 ${result.task_id} 执行一次 runtime orchestration`
+            : `Ran runtime orchestration for ${result.task_id}`
+          : language === "zh-CN"
+            ? `已对 ${result.task_id} 执行一次 supervisor sweep`
+            : `Ran supervisor sweep for ${result.task_id}`,
       );
       await loadOverview({ silent: true });
       await loadBundle(bundle.task.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to run task runtime action");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "执行任务级 runtime 动作失败" : "Failed to run task runtime action");
     } finally {
       setTaskRuntimeBusy(false);
     }
@@ -401,14 +413,14 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
       if (action === "rollback") await rollbackTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
       if (action === "escalate") await escalateTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
       if (action === "replan") await replanTask(currentTaskId, { reason: request?.reason, actor_id: request?.actorId });
-      setNotice(`Action completed: ${action}`);
+      setNotice(language === "zh-CN" ? `操作完成：${action}` : `Action completed: ${action}`);
       if (["pause", "resume", "retry", "rollback", "escalate", "replan"].includes(action)) {
         setSupervisorForm((current) => ({ ...current, reason: "" }));
       }
       await loadOverview();
       await loadBundle(currentTaskId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : `Failed to ${action}`);
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? `执行 ${action} 失败` : `Failed to ${action}`);
     } finally {
       setRunningAction("");
     }
@@ -417,7 +429,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
   async function handleCreateTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!taskForm.title.trim()) {
-      setError("Task title is required");
+      setError(language === "zh-CN" ? "任务标题不能为空" : "Task title is required");
       return;
     }
     setCreatingTask(true);
@@ -443,14 +455,18 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
       });
       if (actorContext.role === "IntakeCoordinator" || actorContext.role === "System") {
         await qualifyTask(created.task_id, taskForm.summary.trim() || undefined);
-        setNotice(`Created and qualified ${created.task_id}`);
+        setNotice(language === "zh-CN" ? `已创建并确认 ${created.task_id}` : `Created and qualified ${created.task_id}`);
       } else {
-        setNotice(`Created ${created.task_id}. Switch to IntakeCoordinator to qualify it.`);
+        setNotice(
+          language === "zh-CN"
+            ? `已创建 ${created.task_id}。请切换到 IntakeCoordinator 继续 Qualify。`
+            : `Created ${created.task_id}. Switch to IntakeCoordinator to qualify it.`,
+        );
       }
       await loadOverview();
       navigateToTask(created.task_id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create task");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "创建任务失败" : "Failed to create task");
     } finally {
       setCreatingTask(false);
     }
@@ -460,7 +476,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     event.preventDefault();
     if (!bundle?.task) return;
     if (!planForm.goal.trim()) {
-      setError("Plan goal is required");
+      setError(language === "zh-CN" ? "计划目标不能为空" : "Plan goal is required");
       return;
     }
     setCreatingPlan(true);
@@ -492,11 +508,15 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         notes: "",
         estimatedEffort: "",
       });
-      setNotice(`Plan v${created.version} created and submitted for review`);
+      setNotice(
+        language === "zh-CN"
+          ? `计划 v${created.version} 已创建并提交评审`
+          : `Plan v${created.version} created and submitted for review`,
+      );
       await loadOverview();
       await loadBundle(bundle.task.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create plan");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "创建计划失败" : "Failed to create plan");
     } finally {
       setCreatingPlan(false);
     }
@@ -505,11 +525,11 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
   async function handleCreateWorkItem(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!bundle?.task || !bundle.plan?.version) {
-      setError("Create a plan before adding work items");
+      setError(language === "zh-CN" ? "请先创建计划，再添加工作项" : "Create a plan before adding work items");
       return;
     }
     if (!workItemForm.title.trim()) {
-      setError("Work item title is required");
+      setError(language === "zh-CN" ? "工作项标题不能为空" : "Work item title is required");
       return;
     }
     setCreatingWorkItems(true);
@@ -541,11 +561,11 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         priority: "normal",
         acceptance: "",
       });
-      setNotice("Work item created and dispatched");
+      setNotice(language === "zh-CN" ? "工作项已创建并派发" : "Work item created and dispatched");
       await loadOverview();
       await loadBundle(bundle.task.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create work item");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "创建工作项失败" : "Failed to create work item");
     } finally {
       setCreatingWorkItems(false);
     }
@@ -554,7 +574,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
   async function handleUpdateWorkItemProgress(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!bundle?.task || !progressForm.workItemId) {
-      setError("Select a work item first");
+      setError(language === "zh-CN" ? "请先选择一个工作项" : "Select a work item first");
       return;
     }
     setUpdatingWorkItem(true);
@@ -570,12 +590,16 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         actor_role: progressForm.actorRole,
         meta: {},
       });
-      setNotice(`Updated ${progressForm.workItemId} to ${progressForm.status}`);
+      setNotice(
+        language === "zh-CN"
+          ? `已将 ${progressForm.workItemId} 更新为 ${progressForm.status}`
+          : `Updated ${progressForm.workItemId} to ${progressForm.status}`,
+      );
       setProgressForm((current) => ({ ...current, summary: "", blockReason: "" }));
       await loadOverview();
       await loadBundle(bundle.task.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update work item progress");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "更新工作项进度失败" : "Failed to update work item progress");
     } finally {
       setUpdatingWorkItem(false);
     }
@@ -585,7 +609,7 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
     event.preventDefault();
     if (!bundle?.task) return;
     if (!artifactForm.name.trim() || !artifactForm.path.trim()) {
-      setError("Artifact name and path are required");
+      setError(language === "zh-CN" ? "Artifact 名称和路径不能为空" : "Artifact name and path are required");
       return;
     }
     setCreatingArtifact(true);
@@ -604,11 +628,11 @@ export function useControlPlane(taskId: string | undefined, navigateToTask: (tas
         meta: {},
       });
       setArtifactForm((current) => ({ ...current, name: "", path: "", summary: "" }));
-      setNotice("Artifact created");
+      setNotice(language === "zh-CN" ? "Artifact 已创建" : "Artifact created");
       await loadOverview();
       await loadBundle(bundle.task.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create artifact");
+      setError(err instanceof Error ? err.message : language === "zh-CN" ? "创建 Artifact 失败" : "Failed to create artifact");
     } finally {
       setCreatingArtifact(false);
     }
