@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 
 def test_health_endpoint():
     pytest.importorskip("sqlalchemy")
-    from modern_delivery_os.backend.app.main import app
+    from companyagents.backend.app.main import app
 
     client = TestClient(app)
     response = client.get("/health")
@@ -24,7 +24,7 @@ def test_health_endpoint():
 
 def test_api_root():
     pytest.importorskip("sqlalchemy")
-    from modern_delivery_os.backend.app.main import app
+    from companyagents.backend.app.main import app
 
     client = TestClient(app)
     response = client.get("/api")
@@ -35,4 +35,4 @@ def test_api_root():
 
 
 def test_env_example_exists():
-    assert Path("/root/edict/modern_delivery_os/.env.example").exists()
+    assert Path("/root/edict/companyagents/.env.example").exists()

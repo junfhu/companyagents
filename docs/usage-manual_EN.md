@@ -149,6 +149,6 @@ You can control it from:
 
 ## Recommended Reading Order
 
-1. [Installation Guide](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
-2. [User Guide](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
-3. [Final Plan](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+1. [Installation Guide](/root/edict/companyagents/docs/install-guide_EN.md)
+2. [User Guide](/root/edict/companyagents/docs/user-guide_EN.md)
+3. [Final Plan](/root/edict/companyagents/docs/final-plan_EN.md)

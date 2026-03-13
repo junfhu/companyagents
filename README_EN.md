@@ -87,7 +87,7 @@ Implemented frontend highlights:
 ## Layout
 
 ```text
-modern_delivery_os/
+companyagents/
   README.md
   README_EN.md
   CHECKLIST.md
@@ -103,35 +103,35 @@ modern_delivery_os/
 ## Documentation Map
 
 - Overview entrypoints:
-  - Chinese [START_HERE.md](/root/edict/modern_delivery_os/START_HERE.md)
-  - English [START_HERE_EN.md](/root/edict/modern_delivery_os/START_HERE_EN.md)
+  - Chinese [START_HERE.md](/root/edict/companyagents/START_HERE.md)
+  - English [START_HERE_EN.md](/root/edict/companyagents/START_HERE_EN.md)
 - Project overview:
-  - Chinese [README.md](/root/edict/modern_delivery_os/README.md)
-  - English [README_EN.md](/root/edict/modern_delivery_os/README_EN.md)
+  - Chinese [README.md](/root/edict/companyagents/README.md)
+  - English [README_EN.md](/root/edict/companyagents/README_EN.md)
 - Completion checklist:
-  - Chinese [CHECKLIST.md](/root/edict/modern_delivery_os/CHECKLIST.md)
-  - English [CHECKLIST_EN.md](/root/edict/modern_delivery_os/CHECKLIST_EN.md)
+  - Chinese [CHECKLIST.md](/root/edict/companyagents/CHECKLIST.md)
+  - English [CHECKLIST_EN.md](/root/edict/companyagents/CHECKLIST_EN.md)
 - Core design:
-  - Chinese [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
-  - English [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+  - Chinese [docs/final-plan.md](/root/edict/companyagents/docs/final-plan.md)
+  - English [docs/final-plan_EN.md](/root/edict/companyagents/docs/final-plan_EN.md)
 - User guide:
-  - Chinese [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
-  - English [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
+  - Chinese [docs/user-guide.md](/root/edict/companyagents/docs/user-guide.md)
+  - English [docs/user-guide_EN.md](/root/edict/companyagents/docs/user-guide_EN.md)
 - Installation:
-  - Chinese [docs/install-guide.md](/root/edict/modern_delivery_os/docs/install-guide.md)
-  - English [docs/install-guide_EN.md](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
+  - Chinese [docs/install-guide.md](/root/edict/companyagents/docs/install-guide.md)
+  - English [docs/install-guide_EN.md](/root/edict/companyagents/docs/install-guide_EN.md)
 - Usage:
-  - Chinese [docs/usage-manual.md](/root/edict/modern_delivery_os/docs/usage-manual.md)
-  - English [docs/usage-manual_EN.md](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
+  - Chinese [docs/usage-manual.md](/root/edict/companyagents/docs/usage-manual.md)
+  - English [docs/usage-manual_EN.md](/root/edict/companyagents/docs/usage-manual_EN.md)
 - Backend docs:
-  - Chinese [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
-  - English [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
+  - Chinese [backend/README.md](/root/edict/companyagents/backend/README.md)
+  - English [backend/README_EN.md](/root/edict/companyagents/backend/README_EN.md)
 - Backend start guide:
-  - Chinese [backend/START.md](/root/edict/modern_delivery_os/backend/START.md)
-  - English [backend/START_EN.md](/root/edict/modern_delivery_os/backend/START_EN.md)
+  - Chinese [backend/START.md](/root/edict/companyagents/backend/START.md)
+  - English [backend/START_EN.md](/root/edict/companyagents/backend/START_EN.md)
 - Frontend docs:
-  - Chinese [frontend/README.md](/root/edict/modern_delivery_os/frontend/README.md)
-  - English [frontend/README_EN.md](/root/edict/modern_delivery_os/frontend/README_EN.md)
+  - Chinese [frontend/README.md](/root/edict/companyagents/frontend/README.md)
+  - English [frontend/README_EN.md](/root/edict/companyagents/frontend/README_EN.md)
 
 ## Where To Look First
 
@@ -150,7 +150,7 @@ modern_delivery_os/
 To seed a few realistic tasks for local demos:
 
 ```bash
-python -m modern_delivery_os.backend.scripts.seed_demo
+python -m companyagents.backend.scripts.seed_demo
 ```
 
 This creates a small mix of:
@@ -163,11 +163,11 @@ This creates a small mix of:
 ## Handy Commands
 
 ```bash
-make -C modern_delivery_os backend-dev
-make -C modern_delivery_os frontend-dev
-make -C modern_delivery_os frontend-build
-make -C modern_delivery_os backend-test
-make -C modern_delivery_os seed-demo
+make -C companyagents backend-dev
+make -C companyagents frontend-dev
+make -C companyagents frontend-build
+make -C companyagents backend-test
+make -C companyagents seed-demo
 ```
 
 ## Recommended Next Work

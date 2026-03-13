@@ -6,7 +6,7 @@ English version: `README_EN.md`
 
 ## 这是什么
 
-`modern_delivery_os/` 是下一代系统的独立实现线，用来把新架构和旧运行时隔离开，方便我们持续迭代、验证和演示，而不影响现有系统。
+`companyagents/` 是下一代系统的独立实现线，用来把新架构和旧运行时隔离开，方便我们持续迭代、验证和演示，而不影响现有系统。
 
 目前这个目录已经不是单纯的规划稿，而是一套可本地运行的垂直切片，覆盖了控制面、权限、runtime worker、实时刷新和前端控制台。
 
@@ -93,7 +93,7 @@ English version: `README_EN.md`
 ## 目录结构
 
 ```text
-modern_delivery_os/
+companyagents/
   README.md
   README_EN.md
   CHECKLIST.md
@@ -109,35 +109,35 @@ modern_delivery_os/
 ## 文档导航
 
 - 总览入口：
-  - 中文 [START_HERE.md](/root/edict/modern_delivery_os/START_HERE.md)
-  - 英文 [START_HERE_EN.md](/root/edict/modern_delivery_os/START_HERE_EN.md)
+  - 中文 [START_HERE.md](/root/edict/companyagents/START_HERE.md)
+  - 英文 [START_HERE_EN.md](/root/edict/companyagents/START_HERE_EN.md)
 - 项目说明：
-  - 中文 [README.md](/root/edict/modern_delivery_os/README.md)
-  - 英文 [README_EN.md](/root/edict/modern_delivery_os/README_EN.md)
+  - 中文 [README.md](/root/edict/companyagents/README.md)
+  - 英文 [README_EN.md](/root/edict/companyagents/README_EN.md)
 - 完成度清单：
-  - 中文 [CHECKLIST.md](/root/edict/modern_delivery_os/CHECKLIST.md)
-  - 英文 [CHECKLIST_EN.md](/root/edict/modern_delivery_os/CHECKLIST_EN.md)
+  - 中文 [CHECKLIST.md](/root/edict/companyagents/CHECKLIST.md)
+  - 英文 [CHECKLIST_EN.md](/root/edict/companyagents/CHECKLIST_EN.md)
 - 核心设计：
-  - 中文 [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
-  - 英文 [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+  - 中文 [docs/final-plan.md](/root/edict/companyagents/docs/final-plan.md)
+  - 英文 [docs/final-plan_EN.md](/root/edict/companyagents/docs/final-plan_EN.md)
 - 用户指南：
-  - 中文 [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
-  - 英文 [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
+  - 中文 [docs/user-guide.md](/root/edict/companyagents/docs/user-guide.md)
+  - 英文 [docs/user-guide_EN.md](/root/edict/companyagents/docs/user-guide_EN.md)
 - 安装部署：
-  - 中文 [docs/install-guide.md](/root/edict/modern_delivery_os/docs/install-guide.md)
-  - 英文 [docs/install-guide_EN.md](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
+  - 中文 [docs/install-guide.md](/root/edict/companyagents/docs/install-guide.md)
+  - 英文 [docs/install-guide_EN.md](/root/edict/companyagents/docs/install-guide_EN.md)
 - 功能使用：
-  - 中文 [docs/usage-manual.md](/root/edict/modern_delivery_os/docs/usage-manual.md)
-  - 英文 [docs/usage-manual_EN.md](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
+  - 中文 [docs/usage-manual.md](/root/edict/companyagents/docs/usage-manual.md)
+  - 英文 [docs/usage-manual_EN.md](/root/edict/companyagents/docs/usage-manual_EN.md)
 - 后端说明：
-  - 中文 [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
-  - 英文 [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
+  - 中文 [backend/README.md](/root/edict/companyagents/backend/README.md)
+  - 英文 [backend/README_EN.md](/root/edict/companyagents/backend/README_EN.md)
 - 后端启动：
-  - 中文 [backend/START.md](/root/edict/modern_delivery_os/backend/START.md)
-  - 英文 [backend/START_EN.md](/root/edict/modern_delivery_os/backend/START_EN.md)
+  - 中文 [backend/START.md](/root/edict/companyagents/backend/START.md)
+  - 英文 [backend/START_EN.md](/root/edict/companyagents/backend/START_EN.md)
 - 前端说明：
-  - 中文 [frontend/README.md](/root/edict/modern_delivery_os/frontend/README.md)
-  - 英文 [frontend/README_EN.md](/root/edict/modern_delivery_os/frontend/README_EN.md)
+  - 中文 [frontend/README.md](/root/edict/companyagents/frontend/README.md)
+  - 英文 [frontend/README_EN.md](/root/edict/companyagents/frontend/README_EN.md)
 
 ## 建议先看哪里
 
@@ -156,7 +156,7 @@ modern_delivery_os/
 本地可以用下面的命令生成一组更真实的 demo 数据：
 
 ```bash
-python -m modern_delivery_os.backend.scripts.seed_demo
+python -m companyagents.backend.scripts.seed_demo
 ```
 
 会生成几类典型任务：
@@ -169,11 +169,11 @@ python -m modern_delivery_os.backend.scripts.seed_demo
 ## 常用命令
 
 ```bash
-make -C modern_delivery_os backend-dev
-make -C modern_delivery_os frontend-dev
-make -C modern_delivery_os frontend-build
-make -C modern_delivery_os backend-test
-make -C modern_delivery_os seed-demo
+make -C companyagents backend-dev
+make -C companyagents frontend-dev
+make -C companyagents frontend-build
+make -C companyagents backend-test
+make -C companyagents seed-demo
 ```
 
 ## 下一步建议

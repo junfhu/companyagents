@@ -13,11 +13,11 @@ understand:
 
 If you want to install it, go to:
 
-- [Installation Guide](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
+- [Installation Guide](/root/edict/companyagents/docs/install-guide_EN.md)
 
 If you want to learn how to use it, go to:
 
-- [Usage Manual](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
+- [Usage Manual](/root/edict/companyagents/docs/usage-manual_EN.md)
 
 ## Product Summary
 
@@ -37,9 +37,9 @@ Today it already supports:
 
 ## Recommended Reading Order
 
-1. [Installation Guide](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
-2. [Usage Manual](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
-3. [Final Plan](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+1. [Installation Guide](/root/edict/companyagents/docs/install-guide_EN.md)
+2. [Usage Manual](/root/edict/companyagents/docs/usage-manual_EN.md)
+3. [Final Plan](/root/edict/companyagents/docs/final-plan_EN.md)
 
 ## Intended Users
 

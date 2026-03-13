@@ -33,7 +33,7 @@ function RoutedApp() {
       <main className="main-content">
         <header className="main-header">
           <div>
-            <p className="eyebrow">Modern Delivery OS</p>
+            <p className="eyebrow">companyagents</p>
             <h2>{controlPlane.bundle?.task.title ?? "Workflow Dashboard"}</h2>
           </div>
           <div className="header-meta">

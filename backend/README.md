@@ -1,6 +1,6 @@
 # Backend
 
-`modern_delivery_os` 后端控制面，基于 FastAPI 实现。
+`companyagents` 后端控制面，基于 FastAPI 实现。
 
 English version: `README_EN.md`
 
@@ -33,4 +33,4 @@ English version: `README_EN.md`
 
 ## 本地运行
 
-详细启动说明见 [START.md](/root/edict/modern_delivery_os/backend/START.md)。
+详细启动说明见 [START.md](/root/edict/companyagents/backend/START.md)。

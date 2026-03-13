@@ -1,2 +1,2 @@
-"""Modern Delivery OS backend package."""
+"""companyagents backend package."""
 

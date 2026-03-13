@@ -12,11 +12,11 @@ English version: `user-guide_EN.md`
 
 如果你想直接安装，请看：
 
-- [安装部署指南](/root/edict/modern_delivery_os/docs/install-guide.md)
+- [安装部署指南](/root/edict/companyagents/docs/install-guide.md)
 
 如果你想直接学习功能使用，请看：
 
-- [功能使用手册](/root/edict/modern_delivery_os/docs/usage-manual.md)
+- [功能使用手册](/root/edict/companyagents/docs/usage-manual.md)
 
 ## 软件概览
 
@@ -34,9 +34,9 @@ AI Delivery Operating System 是一套面向交付流程的工作流控制面，
 
 ## 建议阅读顺序
 
-1. [安装部署指南](/root/edict/modern_delivery_os/docs/install-guide.md)
-2. [功能使用手册](/root/edict/modern_delivery_os/docs/usage-manual.md)
-3. [最终方案](/root/edict/modern_delivery_os/docs/final-plan.md)
+1. [安装部署指南](/root/edict/companyagents/docs/install-guide.md)
+2. [功能使用手册](/root/edict/companyagents/docs/usage-manual.md)
+3. [最终方案](/root/edict/companyagents/docs/final-plan.md)
 
 ## 适合谁使用
 

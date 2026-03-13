@@ -1,7 +1,7 @@
 const API_BASE =
   (import.meta as ImportMeta & { env?: Record<string, string> }).env?.VITE_API_BASE ??
   "http://127.0.0.1:8000/api";
-const ACTOR_STORAGE_KEY = "modern-delivery-os.actor";
+const ACTOR_STORAGE_KEY = "companyagents.actor";
 
 export const ACTOR_ROLE_OPTIONS = [
   "Human",

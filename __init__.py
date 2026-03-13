@@ -1,2 +1,2 @@
-"""Modern Delivery OS package root."""
+"""companyagents package root."""
 

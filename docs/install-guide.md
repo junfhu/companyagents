@@ -4,7 +4,7 @@ English version: `install-guide_EN.md`
 
 ## 适用场景
 
-这份文档适合想把 `modern_delivery_os` 在本地跑起来、做演示、或作为开发环境使用的人。
+这份文档适合想把 `companyagents` 在本地跑起来、做演示、或作为开发环境使用的人。
 
 当前最推荐的方式是：
 
@@ -32,12 +32,12 @@ English version: `install-guide_EN.md`
 进入子仓库目录：
 
 ```bash
-cd modern_delivery_os
+cd companyagents
 ```
 
 ## 2. 安装后端依赖
 
-在 `modern_delivery_os/` 目录执行：
+在 `companyagents/` 目录执行：
 
 ```bash
 python -m pip install -e .
@@ -68,7 +68,7 @@ export APP_RUNTIME_WORKERS_ENABLED=true
 - `APP_AUTO_CREATE_TABLES=true` 允许启动时自动建表
 - `APP_RUNTIME_WORKERS_ENABLED=true` 会启用后台 runtime worker
 
-如果你需要更多配置项，可以参考根目录的 [.env.example](/root/edict/modern_delivery_os/.env.example)。
+如果你需要更多配置项，可以参考根目录的 [.env.example](/root/edict/companyagents/.env.example)。
 
 ## 5. 配置前端环境变量
 
@@ -84,38 +84,39 @@ VITE_API_BASE=http://127.0.0.1:8100/api
 ```
 
 默认的 `frontend/.env.example` 是 `8000` 端口，如果你按项目默认的 `make` 命令启动后端，需要改成 `8100`。
+如果你准备让其他机器访问前端页面，这里不要写 `0.0.0.0`，而应该写服务器实际 IP 或域名，例如 `http://192.168.1.10:8100/api`。
 
 ## 6. 启动后端
 
 在仓库上级目录执行：
 
 ```bash
-make -C modern_delivery_os backend-dev
+make -C companyagents backend-dev
 ```
 
 默认访问地址：
 
 ```text
-http://127.0.0.1:8100
+http://0.0.0.0:8100
 ```
 
 可用于检查是否启动成功：
 
 ```text
-http://127.0.0.1:8100/health
-http://127.0.0.1:8100/api
+http://服务器IP:8100/health
+http://服务器IP:8100/api
 ```
 
 ## 7. 启动前端
 
 ```bash
-make -C modern_delivery_os frontend-dev
+make -C companyagents frontend-dev
 ```
 
 默认前端地址：
 
 ```text
-http://127.0.0.1:4173
+http://服务器IP:4173
 ```
 
 ## 8. 导入演示数据
@@ -123,7 +124,7 @@ http://127.0.0.1:4173
 如果你想快速看到更完整的页面效果，可以导入 demo 数据：
 
 ```bash
-make -C modern_delivery_os seed-demo
+make -C companyagents seed-demo
 ```
 
 它会生成几类任务：
@@ -138,13 +139,13 @@ make -C modern_delivery_os seed-demo
 前端生产构建：
 
 ```bash
-make -C modern_delivery_os frontend-build
+make -C companyagents frontend-build
 ```
 
 后端测试：
 
 ```bash
-make -C modern_delivery_os backend-test
+make -C companyagents backend-test
 ```
 
 ## 常见问题
@@ -169,5 +170,5 @@ make -C modern_delivery_os backend-test
 
 1. 启动后端
 2. 启动前端
-3. 执行 `make -C modern_delivery_os seed-demo`
+3. 执行 `make -C companyagents seed-demo`
 4. 打开 `Board`、`Attention`、`Teams`、`Task Detail`

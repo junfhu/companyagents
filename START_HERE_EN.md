@@ -2,7 +2,7 @@
 
 ## Current Status
 
-The isolated rewrite in `modern_delivery_os/` already has a working end-to-end
+The isolated rewrite in `companyagents/` already has a working end-to-end
 scaffold:
 
 - backend API boots locally
@@ -47,7 +47,7 @@ Frontend flow:
 
 Demo support:
 
-- `python -m modern_delivery_os.backend.scripts.seed_demo`
+- `python -m companyagents.backend.scripts.seed_demo`
 - creates review, execution, blocked, and changes-requested examples
 
 ## Best Entry Points

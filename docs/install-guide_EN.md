@@ -2,7 +2,7 @@
 
 ## Use Case
 
-This guide is for people who want to run `modern_delivery_os` locally for
+This guide is for people who want to run `companyagents` locally for
 development, demos, or product evaluation.
 
 The simplest recommended setup is:
@@ -29,12 +29,12 @@ For local development and demos, you do not need PostgreSQL or Redis.
 ## 1. Get Into The Project
 
 ```bash
-cd modern_delivery_os
+cd companyagents
 ```
 
 ## 2. Install Backend Dependencies
 
-From `modern_delivery_os/`:
+From `companyagents/`:
 
 ```bash
 python -m pip install -e .
@@ -65,7 +65,7 @@ Notes:
 - `APP_AUTO_CREATE_TABLES=true` lets the app create tables on startup
 - `APP_RUNTIME_WORKERS_ENABLED=true` enables the background runtime worker
 
-For more options, see [.env.example](/root/edict/modern_delivery_os/.env.example).
+For more options, see [.env.example](/root/edict/companyagents/.env.example).
 
 ## 5. Configure Frontend Environment
 
@@ -82,38 +82,41 @@ VITE_API_BASE=http://127.0.0.1:8100/api
 
 The default `frontend/.env.example` uses port `8000`, but the project's default
 `make` command starts the backend on `8100`, so update it accordingly.
+If other machines need to open the frontend, do not set this to `0.0.0.0`.
+Use the server's real IP or hostname instead, for example
+`http://192.168.1.10:8100/api`.
 
 ## 6. Start The Backend
 
 From the parent repo:
 
 ```bash
-make -C modern_delivery_os backend-dev
+make -C companyagents backend-dev
 ```
 
 Default backend URL:
 
 ```text
-http://127.0.0.1:8100
+http://0.0.0.0:8100
 ```
 
 Health checks:
 
 ```text
-http://127.0.0.1:8100/health
-http://127.0.0.1:8100/api
+http://SERVER_IP:8100/health
+http://SERVER_IP:8100/api
 ```
 
 ## 7. Start The Frontend
 
 ```bash
-make -C modern_delivery_os frontend-dev
+make -C companyagents frontend-dev
 ```
 
 Default frontend URL:
 
 ```text
-http://127.0.0.1:4173
+http://SERVER_IP:4173
 ```
 
 ## 8. Seed Demo Data
@@ -121,7 +124,7 @@ http://127.0.0.1:4173
 To quickly see a fuller workflow, seed demo data:
 
 ```bash
-make -C modern_delivery_os seed-demo
+make -C companyagents seed-demo
 ```
 
 This creates tasks in a few representative states:
@@ -136,13 +139,13 @@ This creates tasks in a few representative states:
 Frontend production build:
 
 ```bash
-make -C modern_delivery_os frontend-build
+make -C companyagents frontend-build
 ```
 
 Backend tests:
 
 ```bash
-make -C modern_delivery_os backend-test
+make -C companyagents backend-test
 ```
 
 ## Common Issues
@@ -167,5 +170,5 @@ The easiest path is:
 
 1. Start the backend
 2. Start the frontend
-3. Run `make -C modern_delivery_os seed-demo`
+3. Run `make -C companyagents seed-demo`
 4. Open `Board`, `Attention`, `Teams`, and `Task Detail`

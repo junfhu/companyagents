@@ -150,6 +150,6 @@ runtime 是后台 orchestration 逻辑，用来自动推进部分任务状态，
 
 ## 推荐阅读顺序
 
-1. [安装部署指南](/root/edict/modern_delivery_os/docs/install-guide.md)
-2. [用户指南](/root/edict/modern_delivery_os/docs/user-guide.md)
-3. [最终方案](/root/edict/modern_delivery_os/docs/final-plan.md)
+1. [安装部署指南](/root/edict/companyagents/docs/install-guide.md)
+2. [用户指南](/root/edict/companyagents/docs/user-guide.md)
+3. [最终方案](/root/edict/companyagents/docs/final-plan.md)

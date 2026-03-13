@@ -1,23 +1,23 @@
 import argparse
 import asyncio
 
-from modern_delivery_os.backend.app.db import async_session, init_db
-from modern_delivery_os.backend.app.schemas.artifact import ArtifactCreate
-from modern_delivery_os.backend.app.schemas.plan import PlanCreate
-from modern_delivery_os.backend.app.schemas.review import ReviewAction
-from modern_delivery_os.backend.app.schemas.supervisor import InterventionRequest
-from modern_delivery_os.backend.app.schemas.task import TaskCreate, TaskQualify
-from modern_delivery_os.backend.app.schemas.work_item import (
+from companyagents.backend.app.db import async_session, init_db
+from companyagents.backend.app.schemas.artifact import ArtifactCreate
+from companyagents.backend.app.schemas.plan import PlanCreate
+from companyagents.backend.app.schemas.review import ReviewAction
+from companyagents.backend.app.schemas.supervisor import InterventionRequest
+from companyagents.backend.app.schemas.task import TaskCreate, TaskQualify
+from companyagents.backend.app.schemas.work_item import (
     WorkItemCreateBatch,
     WorkItemCreateItem,
     WorkItemProgress,
 )
-from modern_delivery_os.backend.app.services.artifact_service import ArtifactService
-from modern_delivery_os.backend.app.services.plan_service import PlanService
-from modern_delivery_os.backend.app.services.review_service import ReviewService
-from modern_delivery_os.backend.app.services.supervisor_service import SupervisorService
-from modern_delivery_os.backend.app.services.task_service import TaskService
-from modern_delivery_os.backend.app.services.work_item_service import WorkItemService
+from companyagents.backend.app.services.artifact_service import ArtifactService
+from companyagents.backend.app.services.plan_service import PlanService
+from companyagents.backend.app.services.review_service import ReviewService
+from companyagents.backend.app.services.supervisor_service import SupervisorService
+from companyagents.backend.app.services.task_service import TaskService
+from companyagents.backend.app.services.work_item_service import WorkItemService
 
 
 async def seed_task_in_review() -> str:

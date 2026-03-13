@@ -10,7 +10,7 @@ router = APIRouter()
 async def health() -> dict:
     return {
         "ok": True,
-        "service": "modern-delivery-os",
+        "service": "companyagents",
         "status": "healthy",
     }
 

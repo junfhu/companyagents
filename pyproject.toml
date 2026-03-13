@@ -1,5 +1,5 @@
 [project]
-name = "modern-delivery-os"
+name = "companyagents"
 version = "0.1.0"
 description = "Modern-company multi-agent workflow control plane."
 requires-python = ">=3.11"
@@ -21,22 +21,22 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = [
-  "modern_delivery_os",
-  "modern_delivery_os.backend",
-  "modern_delivery_os.backend.app",
-  "modern_delivery_os.backend.app.api",
-  "modern_delivery_os.backend.app.models",
-  "modern_delivery_os.backend.app.schemas",
-  "modern_delivery_os.backend.app.services",
-  "modern_delivery_os.backend.scripts",
+  "companyagents",
+  "companyagents.backend",
+  "companyagents.backend.app",
+  "companyagents.backend.app.api",
+  "companyagents.backend.app.models",
+  "companyagents.backend.app.schemas",
+  "companyagents.backend.app.services",
+  "companyagents.backend.scripts",
 ]
 
 [tool.setuptools.package-dir]
-modern_delivery_os = "."
-"modern_delivery_os.backend" = "backend"
-"modern_delivery_os.backend.app" = "backend/app"
-"modern_delivery_os.backend.app.api" = "backend/app/api"
-"modern_delivery_os.backend.app.models" = "backend/app/models"
-"modern_delivery_os.backend.app.schemas" = "backend/app/schemas"
-"modern_delivery_os.backend.app.services" = "backend/app/services"
-"modern_delivery_os.backend.scripts" = "backend/scripts"
+companyagents = "."
+"companyagents.backend" = "backend"
+"companyagents.backend.app" = "backend/app"
+"companyagents.backend.app.api" = "backend/app/api"
+"companyagents.backend.app.models" = "backend/app/models"
+"companyagents.backend.app.schemas" = "backend/app/schemas"
+"companyagents.backend.app.services" = "backend/app/services"
+"companyagents.backend.scripts" = "backend/scripts"

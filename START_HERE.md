@@ -4,7 +4,7 @@ English version: `START_HERE_EN.md`
 
 ## 当前状态
 
-`modern_delivery_os/` 这条独立重写线现在已经有一套可运行的端到端脚手架：
+`companyagents/` 这条独立重写线现在已经有一套可运行的端到端脚手架：
 
 - 后端 API 可本地启动
 - 已有初始 migration
@@ -48,7 +48,7 @@ English version: `START_HERE_EN.md`
 
 Demo 支持：
 
-- `python -m modern_delivery_os.backend.scripts.seed_demo`
+- `python -m companyagents.backend.scripts.seed_demo`
 - 可生成审核中、执行中、阻塞中、被退回修改计划等样例
 
 ## 建议入口

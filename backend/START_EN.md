@@ -22,7 +22,7 @@ export APP_RUNTIME_WORKERS_ENABLED=true
 From repo root:
 
 ```bash
-uvicorn modern_delivery_os.backend.app.main:app --reload --port 8100
+uvicorn companyagents.backend.app.main:app --reload --port 8100
 ```
 
 ## 3. Health Check
@@ -110,7 +110,7 @@ Useful backend entry points:
 Initial Alembic scaffold is included under:
 
 ```text
-modern_delivery_os/backend/migration/
+companyagents/backend/migration/
 ```
 
 For MVP development, `APP_AUTO_CREATE_TABLES=true` is acceptable.
@@ -121,7 +121,7 @@ Once schema stabilizes, prefer migrations for all changes.
 To create a few realistic tasks for Board, Attention, Teams, and Task Detail:
 
 ```bash
-python -m modern_delivery_os.backend.scripts.seed_demo
+python -m companyagents.backend.scripts.seed_demo
 ```
 
 The seed currently creates examples for:

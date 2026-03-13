@@ -1,6 +1,6 @@
 # Frontend
 
-`modern_delivery_os` 的 React 控制台前端。
+`companyagents` 的 React 控制台前端。
 
 English version: `README_EN.md`
 

@@ -24,7 +24,7 @@ export APP_RUNTIME_WORKERS_ENABLED=true
 在仓库根目录执行：
 
 ```bash
-uvicorn modern_delivery_os.backend.app.main:app --reload --port 8100
+uvicorn companyagents.backend.app.main:app --reload --port 8100
 ```
 
 ## 3. 健康检查
@@ -112,7 +112,7 @@ ws://127.0.0.1:8100/ws?channels=global,task:TASK-123
 初始 Alembic 脚手架位于：
 
 ```text
-modern_delivery_os/backend/migration/
+companyagents/backend/migration/
 ```
 
 在 MVP 开发阶段，`APP_AUTO_CREATE_TABLES=true` 是可接受的。
@@ -123,7 +123,7 @@ modern_delivery_os/backend/migration/
 如果你想为 Board、Attention、Teams、Task Detail 生成更真实的样例任务，可以执行：
 
 ```bash
-python -m modern_delivery_os.backend.scripts.seed_demo
+python -m companyagents.backend.scripts.seed_demo
 ```
 
 当前 seed 会生成：
