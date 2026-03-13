@@ -1,10 +1,12 @@
 # Frontend
 
-React dashboard for the modern delivery control plane.
+`modern_delivery_os` 的 React 控制台前端。
 
-## Current Slice
+English version: `README_EN.md`
 
-The current slice is scaffolded and wired to the backend control-plane APIs:
+## 当前切片
+
+当前前端已经接好后端 control-plane API，包含：
 
 - dashboard summary
 - dashboard attention
@@ -19,19 +21,19 @@ The current slice is scaffolded and wired to the backend control-plane APIs:
 - task action buttons
 - teams overview
 - settings page
-- runtime status and audit panels
-- global and task-level runtime controls
-- realtime WebSocket refresh
+- runtime status 与 audit 面板
+- 全局与任务级 runtime 控制
+- WebSocket 实时刷新
 
-## Run
+## 运行方式
 
-1. Copy `.env.example` to `.env`
-2. Install dependencies with `npm install`
-3. Start the dev server with `npm run dev`
+1. 把 `.env.example` 复制为 `.env`
+2. 执行 `npm install` 安装依赖
+3. 执行 `npm run dev` 启动开发服务器
 
-The app expects the backend API at `VITE_API_BASE`.
+前端默认通过 `VITE_API_BASE` 连接后端 API。
 
-## Implemented Pages
+## 已实现页面
 
 - Task Board
 - Attention
@@ -39,13 +41,13 @@ The app expects the backend API at `VITE_API_BASE`.
 - Teams
 - Settings
 
-## Implementation Notes
+## 实现说明
 
-Current implementation favors:
+当前实现主要倾向于：
 
-- simple route structure
-- bundle API for task detail and dashboard overview
-- WebSocket incremental refresh after first HTTP load
-- shared control-plane panels across Board, Attention, and Sidebar
-- actor-context switching for permission-aware writes
-- runtime control and audit visibility inside the UI
+- 简单直接的路由结构
+- 用 bundle API 拉取 task detail 和 dashboard overview
+- 首次 HTTP 加载后通过 WebSocket 做增量刷新
+- 在 Board、Attention、Sidebar 之间共享 control-plane panels
+- 通过 actor-context 切换支持权限感知写操作
+- 在 UI 中直接暴露 runtime 控制和 audit 可见性
