@@ -68,6 +68,12 @@ const dictionaries = {
       systemActivity: "系统活动",
       recentActivity: "最近活动",
       noRecentSystemActivity: "暂无系统活动。",
+      openclaw: "OpenClaw",
+      openclawAgent: "OpenClaw Agent",
+      openclawDispatch: "OpenClaw 派发",
+      openclawEvents: "OpenClaw 事件",
+      openclawArtifacts: "OpenClaw 产物",
+      noOpenClawActivity: "暂无 OpenClaw 活动。",
     },
     nav: {
       board: "看板",
@@ -240,6 +246,8 @@ const dictionaries = {
       artifactName: "Artifact 名称",
       pathOrUrl: "路径或 URL",
       artifactSummary: "Artifact 摘要",
+      openclawSession: "OpenClaw Session",
+      openclawDispatchOutput: "派发输出",
     },
   },
   en: {
@@ -305,6 +313,12 @@ const dictionaries = {
       systemActivity: "System Activity",
       recentActivity: "Recent Activity",
       noRecentSystemActivity: "No recent system activity yet.",
+      openclaw: "OpenClaw",
+      openclawAgent: "OpenClaw Agent",
+      openclawDispatch: "OpenClaw Dispatch",
+      openclawEvents: "OpenClaw Events",
+      openclawArtifacts: "OpenClaw Artifacts",
+      noOpenClawActivity: "No OpenClaw activity yet.",
     },
     nav: {
       board: "Board",
@@ -480,6 +494,8 @@ const dictionaries = {
       artifactName: "Artifact name",
       pathOrUrl: "Path or URL",
       artifactSummary: "Artifact summary",
+      openclawSession: "OpenClaw Session",
+      openclawDispatchOutput: "Dispatch output",
     },
   },
 } as const;

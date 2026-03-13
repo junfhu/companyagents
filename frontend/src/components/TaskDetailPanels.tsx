@@ -11,6 +11,7 @@ export type {
 
 export {
   ArtifactsPanel,
+  OpenClawPanel,
   PlanPanel,
   ReviewsPanel,
   RuntimeTaskAuditPanel,

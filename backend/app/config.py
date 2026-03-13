@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -28,6 +29,18 @@ class Settings(BaseSettings):
         default=900.0,
         validation_alias="APP_RUNTIME_BLOCKED_ESCALATION_SECONDS",
     )
+    openclaw_enabled: bool = Field(default=False, validation_alias="APP_OPENCLAW_ENABLED")
+    openclaw_command: str = Field(default="openclaw", validation_alias="APP_OPENCLAW_COMMAND")
+    openclaw_command_timeout_seconds: int = Field(default=300, validation_alias="APP_OPENCLAW_COMMAND_TIMEOUT_SECONDS")
+    openclaw_agents_root: str = Field(
+        default=str(Path.home() / ".openclaw" / "agents"),
+        validation_alias="APP_OPENCLAW_AGENTS_ROOT",
+    )
+    openclaw_default_dispatch_agent: str = Field(
+        default="shangshu",
+        validation_alias="APP_OPENCLAW_DEFAULT_DISPATCH_AGENT",
+    )
+    openclaw_agent_map_json: str = Field(default="{}", validation_alias="APP_OPENCLAW_AGENT_MAP_JSON")
 
     @property
     def database_url(self) -> str:

@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -6,6 +7,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from companyagents.backend.app.api.router import router
+from companyagents.backend.app.config import get_settings
 from companyagents.backend.app.db import Base, get_db
 from companyagents.backend.app.models import (  # noqa: F401
     ActivityEvent,
@@ -675,5 +677,116 @@ def test_runtime_worker_escalates_stalled_blocked_task(session_factory):
 
             attention = await DashboardService(attention_session).build_attention()
             assert any(item["id"] == task.id for item in attention["stalled"])
+
+    asyncio.run(scenario())
+
+
+def test_runtime_worker_dispatches_to_openclaw_and_ingests_session(session_factory, monkeypatch, tmp_path):
+    async def scenario():
+        from companyagents.backend.app.schemas.plan import PlanCreate
+        from companyagents.backend.app.schemas.review import ReviewAction
+        from companyagents.backend.app.schemas.task import TaskCreate
+        from companyagents.backend.app.services.plan_service import PlanService
+        from companyagents.backend.app.services.review_service import ReviewService
+        from companyagents.backend.app.services.task_bundle_service import TaskBundleService
+        from companyagents.backend.app.services.task_service import TaskService
+
+        agents_root = tmp_path / "openclaw-agents"
+        session_dir = agents_root / "gongbu" / "sessions"
+        session_dir.mkdir(parents=True, exist_ok=True)
+
+        async with session_factory() as session:
+            task_service = TaskService(session)
+            plan_service = PlanService(session)
+            review_service = ReviewService(session)
+
+            task = await task_service.create_task(
+                TaskCreate(
+                    title="OpenClaw embedded execution",
+                    summary="Dispatch approved work into an OpenClaw agent session",
+                    priority="high",
+                    requester="ops@example.com",
+                )
+            )
+            await task_service.qualify_task(task.id, owner_id="intake-test")
+            await plan_service.create_plan(
+                task.id,
+                PlanCreate(
+                    goal="Let OpenClaw execute the approved task",
+                    scope=["Implement feature", "Report progress"],
+                    acceptance_criteria=["Dispatch is recorded", "Session output is ingested"],
+                    required_teams=["Engineering"],
+                    created_by_id="pm-test",
+                ),
+            )
+            await plan_service.submit_for_review(task.id, actor_id="pm-test", plan_version=1)
+            await review_service.approve(
+                task.id,
+                ReviewAction(
+                    plan_version=1,
+                    reviewer_id="review-test",
+                    comments=["Proceed to OpenClaw"],
+                    summary="Approved for OpenClaw dispatch",
+                ),
+            )
+            await session.commit()
+
+        mock_settings = get_settings().model_copy(
+            update={
+                "openclaw_enabled": True,
+                "openclaw_command": "/bin/echo",
+                "openclaw_command_timeout_seconds": 30,
+                "openclaw_agents_root": str(agents_root),
+                "openclaw_default_dispatch_agent": "shangshu",
+            }
+        )
+        monkeypatch.setattr("companyagents.backend.app.services.runtime_service.get_settings", lambda: mock_settings)
+
+        worker = RuntimeWorker(session_factory=session_factory, poll_interval_seconds=60, actor_id="runtime-test")
+        first_run = await worker.run_once()
+        assert first_run["generated_work_items"] == 1
+        assert first_run["dispatched_tasks"] == 1
+
+        session_payloads = [
+            {
+                "timestamp": "2026-03-13T10:00:00Z",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"任务ID: {task.id}\n已收到任务，准备在工部执行并回报结果。",
+                        }
+                    ],
+                },
+            },
+            {
+                "timestamp": "2026-03-13T10:00:05Z",
+                "message": {
+                    "role": "tool_result",
+                    "toolName": "bash",
+                    "details": {
+                        "exitCode": 0,
+                        "stdout": f"processed {task.id}",
+                    },
+                    "content": [],
+                },
+            },
+        ]
+        (session_dir / "session-1.jsonl").write_text(
+            "\n".join(json.dumps(item, ensure_ascii=False) for item in session_payloads),
+            encoding="utf-8",
+        )
+
+        second_run = await worker.run_once()
+        assert second_run["dispatched_tasks"] == 0
+
+        async with session_factory() as verification_session:
+            bundle = await TaskBundleService(verification_session).build_bundle(task.id)
+            assert bundle["task"]["meta"]["openclaw_agent_id"] == "gongbu"
+            assert any(event["topic"] == "openclaw.dispatched" for event in bundle["activity"])
+            assert any(event["topic"] == "openclaw.assistant" for event in bundle["activity"])
+            assert any(event["topic"] == "openclaw.tool_result" for event in bundle["activity"])
+            assert any(item["meta"].get("openclaw_auto") for item in bundle["artifacts"])
 
     asyncio.run(scenario())

@@ -5,6 +5,7 @@ import {
   ArtifactFormPanel,
   ArtifactsPanel,
   DetailAction,
+  OpenClawPanel,
   PlanFormPanel,
   PlanPanel,
   ReviewsPanel,
@@ -119,6 +120,7 @@ export function TaskDetailPage({
         onSubmit={onUpdateWorkItemProgress}
       />
       <ReviewsPanel reviews={bundle.reviews} />
+      <OpenClawPanel task={bundle.task} activity={bundle.activity} artifacts={bundle.artifacts} />
       <RuntimeTaskAuditPanel
         activity={bundle.activity}
         workItems={bundle.work_items}

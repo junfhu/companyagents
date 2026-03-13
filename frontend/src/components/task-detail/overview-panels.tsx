@@ -73,6 +73,12 @@ export function TaskHeroPanel({
 }) {
   const { language, t } = useI18n();
   const inReview = task.state === "InReview";
+  const openclawAgentId =
+    typeof task.meta?.openclaw_agent_id === "string" ? task.meta.openclaw_agent_id : "";
+  const openclawDispatch =
+    task.meta && typeof task.meta.openclaw_dispatch === "object" && task.meta.openclaw_dispatch
+      ? (task.meta.openclaw_dispatch as Record<string, unknown>)
+      : null;
 
   return (
     <section className="panel hero-panel">
@@ -85,6 +91,10 @@ export function TaskHeroPanel({
           <span>{t("common.owner")}: {translateRole(language, task.owner_role)}</span>
           <span>{t("common.priority")}: {translatePriority(language, task.priority)}</span>
           <span>{t("common.updated")}: {formatDate(task.updated_at)}</span>
+          {openclawAgentId ? <span>OpenClaw Agent: {openclawAgentId}</span> : null}
+          {openclawDispatch ? (
+            <span>OpenClaw Dispatch: {openclawDispatch.ok ? "ok" : "failed"}</span>
+          ) : null}
         </div>
       </div>
       <p className="summary-copy">{task.summary || t("common.noSummary")}</p>
@@ -363,6 +373,86 @@ export function RuntimeTaskAuditPanel({
               <span>{event.entity_type}</span>
               <span>{formatDate(event.created_at)}</span>
             </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function OpenClawPanel({
+  task,
+  activity,
+  artifacts,
+}: {
+  task: Task;
+  activity: ActivityEvent[];
+  artifacts: Artifact[];
+}) {
+  const { t } = useI18n();
+  const openclawEvents = activity.filter((event) => event.topic.startsWith("openclaw.")).slice(-6).reverse();
+  const openclawArtifacts = artifacts.filter((artifact) => Boolean(artifact.meta?.openclaw_auto)).slice(-3).reverse();
+  const openclawAgentId =
+    typeof task.meta?.openclaw_agent_id === "string" ? task.meta.openclaw_agent_id : "";
+  const openclawDispatch =
+    task.meta && typeof task.meta.openclaw_dispatch === "object" && task.meta.openclaw_dispatch
+      ? (task.meta.openclaw_dispatch as Record<string, unknown>)
+      : null;
+
+  return (
+    <section className="panel">
+      <div className="panel-header">
+        <h3>{t("taskDetail.openclawSession")}</h3>
+        <span className="muted">{openclawEvents.length}</span>
+      </div>
+      <div className="stack">
+        <div className="stats-grid">
+          <article className="stat-card">
+            <span>{t("common.openclawAgent")}</span>
+            <strong>{openclawAgentId || "-"}</strong>
+          </article>
+          <article className="stat-card">
+            <span>{t("common.openclawEvents")}</span>
+            <strong>{openclawEvents.length}</strong>
+          </article>
+          <article className="stat-card">
+            <span>{t("common.openclawArtifacts")}</span>
+            <strong>{openclawArtifacts.length}</strong>
+          </article>
+        </div>
+        {openclawDispatch ? (
+          <article className="list-card runtime-audit-card">
+            <div className="list-card-top">
+              <strong>{t("common.openclawDispatch")}</strong>
+              <span className="pill subtle">{openclawDispatch.ok ? "ok" : "failed"}</span>
+            </div>
+            <p>{String(openclawDispatch.output || t("common.noSummary"))}</p>
+            <small>{t("taskDetail.openclawDispatchOutput")}</small>
+          </article>
+        ) : null}
+        {openclawEvents.length === 0 ? <p className="muted">{t("common.noOpenClawActivity")}</p> : null}
+        {openclawEvents.map((event) => (
+          <article key={event.id} className="list-card runtime-audit-card">
+            <div className="list-card-top">
+              <strong>{event.topic}</strong>
+              <span className="pill runtime-pill">{t("common.openclaw")}</span>
+            </div>
+            <p>{summarizeRuntimeEvent(event)}</p>
+            <div className="team-metrics">
+              <span>{event.actor_id}</span>
+              <span>{event.entity_type}</span>
+              <span>{formatDate(event.created_at)}</span>
+            </div>
+          </article>
+        ))}
+        {openclawArtifacts.map((artifact) => (
+          <article key={artifact.id} className="list-card">
+            <div className="list-card-top">
+              <strong>{artifact.name}</strong>
+              <span className="pill runtime-pill">{t("common.openclaw")}</span>
+            </div>
+            <p>{artifact.summary || artifact.path_or_url}</p>
+            <small className="mono-line">{artifact.path_or_url}</small>
           </article>
         ))}
       </div>
