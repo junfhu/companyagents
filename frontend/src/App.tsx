@@ -1,4 +1,4 @@
-import { BrowserRouter, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter, NavLink, Navigate, Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { AttentionPage } from "./pages/AttentionPage";
 import { BoardPage } from "./pages/BoardPage";
@@ -10,7 +10,8 @@ import { useI18n } from "./i18n";
 
 function RoutedApp() {
   const navigate = useNavigate();
-  const { taskId } = useParams();
+  const taskMatch = useMatch("/tasks/:taskId");
+  const taskId = taskMatch?.params.taskId;
   const controlPlane = useControlPlane(taskId, (nextTaskId) => navigate(`/tasks/${nextTaskId}`));
   const { t } = useI18n();
 
