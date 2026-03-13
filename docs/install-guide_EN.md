@@ -1,0 +1,171 @@
+# Installation Guide
+
+## Use Case
+
+This guide is for people who want to run `modern_delivery_os` locally for
+development, demos, or product evaluation.
+
+The simplest recommended setup is:
+
+- SQLite for backend storage
+- Vite dev server for frontend
+- Optional demo seed data
+
+## Requirements
+
+Recommended environment:
+
+- Python `3.11+`
+- Node.js `18+`
+- npm `9+`
+
+Optional infrastructure:
+
+- PostgreSQL
+- Redis
+
+For local development and demos, you do not need PostgreSQL or Redis.
+
+## 1. Get Into The Project
+
+```bash
+cd modern_delivery_os
+```
+
+## 2. Install Backend Dependencies
+
+From `modern_delivery_os/`:
+
+```bash
+python -m pip install -e .
+```
+
+## 3. Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+## 4. Configure Backend Environment
+
+Minimal local example:
+
+```bash
+export DATABASE_URL_OVERRIDE="sqlite+aiosqlite:///./delivery_os.db"
+export APP_AUTO_CREATE_TABLES=true
+export APP_DEBUG=true
+export APP_RUNTIME_WORKERS_ENABLED=true
+```
+
+Notes:
+
+- `DATABASE_URL_OVERRIDE` points to a local SQLite database
+- `APP_AUTO_CREATE_TABLES=true` lets the app create tables on startup
+- `APP_RUNTIME_WORKERS_ENABLED=true` enables the background runtime worker
+
+For more options, see [.env.example](/root/edict/modern_delivery_os/.env.example).
+
+## 5. Configure Frontend Environment
+
+```bash
+cd frontend
+cp .env.example .env
+```
+
+Then make sure `.env` contains:
+
+```text
+VITE_API_BASE=http://127.0.0.1:8100/api
+```
+
+The default `frontend/.env.example` uses port `8000`, but the project's default
+`make` command starts the backend on `8100`, so update it accordingly.
+
+## 6. Start The Backend
+
+From the parent repo:
+
+```bash
+make -C modern_delivery_os backend-dev
+```
+
+Default backend URL:
+
+```text
+http://127.0.0.1:8100
+```
+
+Health checks:
+
+```text
+http://127.0.0.1:8100/health
+http://127.0.0.1:8100/api
+```
+
+## 7. Start The Frontend
+
+```bash
+make -C modern_delivery_os frontend-dev
+```
+
+Default frontend URL:
+
+```text
+http://127.0.0.1:4173
+```
+
+## 8. Seed Demo Data
+
+To quickly see a fuller workflow, seed demo data:
+
+```bash
+make -C modern_delivery_os seed-demo
+```
+
+This creates tasks in a few representative states:
+
+- waiting for review
+- actively executing
+- stalled and blocked
+- sent back for planning changes
+
+## 9. Build And Test
+
+Frontend production build:
+
+```bash
+make -C modern_delivery_os frontend-build
+```
+
+Backend tests:
+
+```bash
+make -C modern_delivery_os backend-test
+```
+
+## Common Issues
+
+### The frontend loads but shows no data
+
+Check:
+
+- the backend is running
+- `VITE_API_BASE` points to `http://127.0.0.1:8100/api`
+
+### The backend starts but the UI errors out
+
+Check:
+
+- `python -m pip install -e .` was run
+- `APP_AUTO_CREATE_TABLES=true` is set
+
+### I want the fastest way to evaluate the product
+
+The easiest path is:
+
+1. Start the backend
+2. Start the frontend
+3. Run `make -C modern_delivery_os seed-demo`
+4. Open `Board`, `Attention`, `Teams`, and `Task Detail`

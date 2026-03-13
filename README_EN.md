@@ -117,6 +117,12 @@ modern_delivery_os/
 - User guide:
   - Chinese [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
   - English [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
+- Installation:
+  - Chinese [docs/install-guide.md](/root/edict/modern_delivery_os/docs/install-guide.md)
+  - English [docs/install-guide_EN.md](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
+- Usage:
+  - Chinese [docs/usage-manual.md](/root/edict/modern_delivery_os/docs/usage-manual.md)
+  - English [docs/usage-manual_EN.md](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
 - Backend docs:
   - Chinese [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
   - English [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
@@ -131,6 +137,8 @@ modern_delivery_os/
 
 - `docs/final-plan_EN.md`: final product and architecture direction
 - `docs/user-guide_EN.md`: installation and usage guide
+- `docs/install-guide_EN.md`: installation and local setup
+- `docs/usage-manual_EN.md`: feature walkthrough and usage flow
 - `CHECKLIST_EN.md`: current completion checklist
 - `backend/START_EN.md`: local backend run guide
 - `frontend/README_EN.md`: frontend local run guide

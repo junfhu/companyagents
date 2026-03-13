@@ -123,6 +123,12 @@ modern_delivery_os/
 - 用户指南：
   - 中文 [docs/user-guide.md](/root/edict/modern_delivery_os/docs/user-guide.md)
   - 英文 [docs/user-guide_EN.md](/root/edict/modern_delivery_os/docs/user-guide_EN.md)
+- 安装部署：
+  - 中文 [docs/install-guide.md](/root/edict/modern_delivery_os/docs/install-guide.md)
+  - 英文 [docs/install-guide_EN.md](/root/edict/modern_delivery_os/docs/install-guide_EN.md)
+- 功能使用：
+  - 中文 [docs/usage-manual.md](/root/edict/modern_delivery_os/docs/usage-manual.md)
+  - 英文 [docs/usage-manual_EN.md](/root/edict/modern_delivery_os/docs/usage-manual_EN.md)
 - 后端说明：
   - 中文 [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
   - 英文 [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
@@ -137,6 +143,8 @@ modern_delivery_os/
 
 - `docs/final-plan.md`：最终产品方向和架构规划
 - `docs/user-guide.md`：用户安装与使用说明
+- `docs/install-guide.md`：安装部署指南
+- `docs/usage-manual.md`：功能使用手册
 - `CHECKLIST.md`：当前完成度清单
 - `backend/START.md`：后端本地运行说明
 - `frontend/README.md`：前端本地运行说明
