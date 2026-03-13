@@ -54,15 +54,16 @@ Demo support:
 
 If you are getting oriented, open these first:
 
-1. `README.md`
-2. `docs/final-plan.md`
-3. `backend/START.md`
-4. `backend/app/main.py`
-5. `backend/app/api/router.py`
-6. `backend/app/services/dashboard_service.py`
-7. `backend/app/services/task_bundle_service.py`
-8. `frontend/src/hooks/useControlPlane.ts`
-9. `frontend/src/App.tsx`
+1. `README.md` (中文默认说明)
+2. `README_EN.md` (English version)
+3. `docs/final-plan.md`
+4. `backend/START.md`
+5. `backend/app/main.py`
+6. `backend/app/api/router.py`
+7. `backend/app/services/dashboard_service.py`
+8. `backend/app/services/task_bundle_service.py`
+9. `frontend/src/hooks/useControlPlane.ts`
+10. `frontend/src/App.tsx`
 
 ## Best Next Engineering Steps
 

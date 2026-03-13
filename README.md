@@ -1,45 +1,51 @@
 # AI Delivery Operating System
 
-Modern-company rewrite of the current multi-agent workflow system.
+当前多智能体交付系统的现代化重写版本。
 
-## What This Folder Is
+English version: `README_EN.md`
 
-This directory is the isolated implementation track for the next-generation
-system. It keeps the new architecture separate from the legacy runtime so we
-can iterate safely.
+## 这是什么
 
-The current scaffold already includes:
+`modern_delivery_os/` 是下一代系统的独立实现线，用来把新架构和旧运行时隔离开，方便我们持续迭代、验证和演示，而不影响现有系统。
 
-- modern role and workflow model
+目前这个目录已经不是单纯的规划稿，而是一套可本地运行的垂直切片，覆盖了控制面、权限、runtime worker、实时刷新和前端控制台。
+
+## 当前已实现
+
+当前脚手架已经包含：
+
+- 现代化角色与任务流转模型
 - FastAPI control plane
-- SQLite/Postgres-compatible SQLAlchemy models
-- Alembic scaffold and initial migration
-- task, plan, review, work item, artifact, activity, and intervention flows
-- actor-aware permission checks for write actions
-- React dashboard with Board, Attention, Teams, Task Detail, and Settings pages
-- WebSocket-based realtime refresh
-- lightweight runtime worker that auto-dispatches approved tasks
-- runtime status, audit, and manual control surfaces
+- 兼容 SQLite / Postgres 的 SQLAlchemy 模型
+- Alembic 初始化迁移
+- task、plan、review、work item、artifact、activity、intervention 全链路
+- 基于 actor 的写操作权限校验
+- React 控制台，包含 `Board`、`Attention`、`Teams`、`Task Detail`、`Settings`
+- WebSocket 实时刷新
+- 轻量级 runtime worker，可自动派发已批准任务
+- runtime 状态、审计视图和手动控制能力
 
-## Current Status
+## 当前状态
 
-This is no longer just a planning folder. The vertical slice already works for:
+现在已经可以跑通如下主链路：
 
-1. create task
-2. qualify task
-3. create plan
-4. submit review
-5. approve / request changes / reject
-6. create work items
-7. update work item progress
-8. create artifacts
-9. inspect task bundle, dashboard bundle, teams, and activity
-10. let the runtime worker auto-create work items for approved plans
-11. let the runtime worker advance completed execution into reporting-ready and done states
-12. control runtime globally and per task from the UI
-13. audit runtime-generated work, events, and escalations
+1. 创建任务
+2. Qualify 任务
+3. 创建计划
+4. 提交审核
+5. 批准 / 请求修改 / 拒绝
+6. 创建 work item
+7. 更新 work item 进度
+8. 创建 artifact
+9. 查看 task bundle、dashboard bundle、teams 和 activity
+10. 让 runtime worker 为已批准计划自动生成执行 work item
+11. 让 runtime worker 将已完成执行自动推进到 `ReadyToReport` 和 `Done`
+12. 在 UI 中全局或按任务控制 runtime
+13. 审计 runtime 生成的 work、event 和 escalation
 
-Implemented backend highlights:
+## 后端能力概览
+
+已实现的关键接口包括：
 
 - `GET /health`
 - `GET /api`
@@ -68,25 +74,28 @@ Implemented backend highlights:
 - `POST /api/runtime/resume`
 - `POST /api/runtime/tasks/{task_id}/run-once`
 - `POST /api/runtime/tasks/{task_id}/sweep`
-- WebSocket endpoint at `/ws`
+- WebSocket 端点 `/ws`
 
-Implemented frontend highlights:
+## 前端能力概览
 
-- `Board` overview page
-- `Attention` queue page
-- `Teams` execution page
-- `Task Detail` drill-down page
-- `Settings` page for actor and runtime controls
-- task creation, planning, review, work item, progress, and artifact forms
-- runtime status panel, runtime audit views, and task-level runtime actions
-- realtime refresh from WebSocket events
-- demo seed script for realistic control-plane data
+目前前端已经具备：
 
-## Layout
+- `Board` 总览页
+- `Attention` 队列页
+- `Teams` 执行页
+- `Task Detail` 任务详情页
+- `Settings` 页面，用于 actor 切换和 runtime 控制
+- 任务创建、计划、审核、work item、进度、artifact 表单
+- runtime 状态面板、runtime audit 视图、任务级 runtime 操作
+- 基于 WebSocket 的实时刷新
+- 用于演示的 demo seed 脚本
+
+## 目录结构
 
 ```text
 modern_delivery_os/
   README.md
+  README_EN.md
   CHECKLIST.md
   START_HERE.md
   docs/
@@ -95,30 +104,30 @@ modern_delivery_os/
   tests/
 ```
 
-## Where To Look First
+## 建议先看哪里
 
-- `docs/final-plan.md`: final product and architecture direction
-- `backend/START.md`: local backend run guide
-- `frontend/README.md`: frontend local run guide
-- `backend/app/main.py`: FastAPI entrypoint
-- `frontend/src/App.tsx`: app shell and routing
+- `docs/final-plan.md`：最终产品方向和架构规划
+- `backend/START.md`：后端本地运行说明
+- `frontend/README.md`：前端本地运行说明
+- `backend/app/main.py`：FastAPI 入口
+- `frontend/src/App.tsx`：前端应用壳和路由
 
-## Demo Data
+## 演示数据
 
-To seed a few realistic tasks for local demos:
+本地可以用下面的命令生成一组更真实的 demo 数据：
 
 ```bash
 python -m modern_delivery_os.backend.scripts.seed_demo
 ```
 
-This creates a small mix of:
+会生成几类典型任务：
 
-- task waiting in review
-- task actively executing
-- blocked task with intervention history
-- task sent back for planning changes
+- 等待审核的任务
+- 执行中的任务
+- 已阻塞且带 intervention 历史的任务
+- 被退回修改计划的任务
 
-## Handy Commands
+## 常用命令
 
 ```bash
 make -C modern_delivery_os backend-dev
@@ -128,12 +137,11 @@ make -C modern_delivery_os backend-test
 make -C modern_delivery_os seed-demo
 ```
 
-## Recommended Next Work
+## 下一步建议
 
-The scaffold is ready for the next implementation layer. Highest-value next
-items are:
+当前脚手架已经适合继续往下一层实现。比较高价值的下一步包括：
 
-1. add richer runtime policies, retries, and task-specific templates
-2. add deeper supervisor history UX and intervention analytics
-3. add Inbox/Templates pages to round out the product shell
-4. add demo seed scripts and richer end-to-end tests
+1. 增强 runtime 策略、重试机制和任务模板能力
+2. 补强 supervisor 历史视图和 intervention 分析
+3. 增加 `Inbox` / `Templates` 页面，补齐产品壳
+4. 增加 demo seed 和更完整的端到端测试
