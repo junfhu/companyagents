@@ -99,11 +99,36 @@ modern_delivery_os/
   CHECKLIST.md
   CHECKLIST_EN.md
   START_HERE.md
+  START_HERE_EN.md
   docs/
   backend/
   frontend/
   tests/
 ```
+
+## 文档导航
+
+- 总览入口：
+  - 中文 [START_HERE.md](/root/edict/modern_delivery_os/START_HERE.md)
+  - 英文 [START_HERE_EN.md](/root/edict/modern_delivery_os/START_HERE_EN.md)
+- 项目说明：
+  - 中文 [README.md](/root/edict/modern_delivery_os/README.md)
+  - 英文 [README_EN.md](/root/edict/modern_delivery_os/README_EN.md)
+- 完成度清单：
+  - 中文 [CHECKLIST.md](/root/edict/modern_delivery_os/CHECKLIST.md)
+  - 英文 [CHECKLIST_EN.md](/root/edict/modern_delivery_os/CHECKLIST_EN.md)
+- 核心设计：
+  - 中文 [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
+  - 英文 [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+- 后端说明：
+  - 中文 [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
+  - 英文 [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
+- 后端启动：
+  - 中文 [backend/START.md](/root/edict/modern_delivery_os/backend/START.md)
+  - 英文 [backend/START_EN.md](/root/edict/modern_delivery_os/backend/START_EN.md)
+- 前端说明：
+  - 中文 [frontend/README.md](/root/edict/modern_delivery_os/frontend/README.md)
+  - 英文 [frontend/README_EN.md](/root/edict/modern_delivery_os/frontend/README_EN.md)
 
 ## 建议先看哪里
 

@@ -2,6 +2,8 @@
 
 Modern-company rewrite of the current multi-agent workflow system.
 
+Chinese default: `README.md`
+
 ## What This Folder Is
 
 This directory is the isolated implementation track for the next-generation
@@ -91,11 +93,36 @@ modern_delivery_os/
   CHECKLIST.md
   CHECKLIST_EN.md
   START_HERE.md
+  START_HERE_EN.md
   docs/
   backend/
   frontend/
   tests/
 ```
+
+## Documentation Map
+
+- Overview entrypoints:
+  - Chinese [START_HERE.md](/root/edict/modern_delivery_os/START_HERE.md)
+  - English [START_HERE_EN.md](/root/edict/modern_delivery_os/START_HERE_EN.md)
+- Project overview:
+  - Chinese [README.md](/root/edict/modern_delivery_os/README.md)
+  - English [README_EN.md](/root/edict/modern_delivery_os/README_EN.md)
+- Completion checklist:
+  - Chinese [CHECKLIST.md](/root/edict/modern_delivery_os/CHECKLIST.md)
+  - English [CHECKLIST_EN.md](/root/edict/modern_delivery_os/CHECKLIST_EN.md)
+- Core design:
+  - Chinese [docs/final-plan.md](/root/edict/modern_delivery_os/docs/final-plan.md)
+  - English [docs/final-plan_EN.md](/root/edict/modern_delivery_os/docs/final-plan_EN.md)
+- Backend docs:
+  - Chinese [backend/README.md](/root/edict/modern_delivery_os/backend/README.md)
+  - English [backend/README_EN.md](/root/edict/modern_delivery_os/backend/README_EN.md)
+- Backend start guide:
+  - Chinese [backend/START.md](/root/edict/modern_delivery_os/backend/START.md)
+  - English [backend/START_EN.md](/root/edict/modern_delivery_os/backend/START_EN.md)
+- Frontend docs:
+  - Chinese [frontend/README.md](/root/edict/modern_delivery_os/frontend/README.md)
+  - English [frontend/README_EN.md](/root/edict/modern_delivery_os/frontend/README_EN.md)
 
 ## Where To Look First
 
